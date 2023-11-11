@@ -7,6 +7,8 @@
 - [[#development-comments][Development Comments]]
   - [[#considerations--things-to-fix][Considerations / Things to fix]]
 - [[#example-yaml][Example YAML]]
+- [[#development][Development]]
+  - [[#proposed-yaml][Proposed YAML]]
 
 * Introduction
 This repository is "Work in Progress"
@@ -16,8 +18,8 @@ ESPHome. In the process, it is hoped that the use of this SX126X can be as easy
 as possible and in most cases wholly driven from the ESPHome YAML files.
 
 ** Hardware
-This component is being developed on the Heltec V3 Development Boards.
-Namely:
+This component is being developed on the Heltec V3 Development Boards which use
+the LoRa SX1262 chip. Namely:
 
 - [[https://heltec.org/project/wifi-lora-32-v3/][Heltec Wifi LoRa 32 (V3)]] - heltec_wifi_kit_32_V3 (in expressif)
 - [[https://heltec.org/project/wireless-stick-v3/][Heltec Wireless Stick (V3)]] - heltec_wireless_stick_V3
@@ -105,4 +107,59 @@ Proposed example YAML configuration
 
   lora_sx126x:
     sensor: name
+#+end_src
+
+* Development
+** Proposed YAML
+
+#+begin_src yaml
+  lora_sx126x:
+    # optional, with sensile defaults, if possible from board id.
+    sx126x:
+      pin_lora_reset: 12
+      pin_lora_dio_1: 14
+      pin_lora_busy:  13
+      pin_lora_nss:    8
+      pin_lora_sclk:   9
+      pin_lora_miso:  11
+      pin_lora_mosi:  10
+      radio_txen:     -1
+      radio_rxen:     -1
+      use_dio2_ant_switch: true
+      use_dio3_tcx0:       true
+      use_dxo3_ant_switch: false
+
+    lora:
+      # required - depends on region and frequency band being used
+      rf_frequency: 915000000
+      # optional (sensible defaults)
+      tx_output_power:       22
+      lora_bandwidth:         0
+      lora_spreading_factor:  7
+      lora_codingrate:        1
+      lora_preamble_length:   8
+      lora_symbol_timeout:    0
+      lora_fix_length_layload_on: false
+      lora_iq_inversion_on:       false
+      rx_timeout_value:    3000
+      tx_timeout_value:    3000
+
+  text_sensor:
+    - platform: lora_sx126x
+      id: message
+      name: LoRa Message
+
+  binary_sensor:
+    - platform: lora_sx126x
+      id: lora_sensor
+      name: LoRa Sensor
+      on_string:  "@+++"
+      off_string: "@---"
+
+  switch:
+    - platform: lora_sx126x
+      id: lora_switch
+      name: LoRa Switch
+      on_string: "@+++"
+      off_string: "@---"
 #+end_src
