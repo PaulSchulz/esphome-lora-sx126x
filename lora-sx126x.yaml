@@ -13,8 +13,8 @@ esp32:
 external_components:
   - source:
       type: local
-      path: esphome/components
-#    components: ["lora_sx126x"]
+      path: esphome/components 
+    components: ["lora_sx126x"]
 
 # Enable logging
 logger:
@@ -47,5 +47,14 @@ web_server:
 #    scl: 18
 
 lora_sx126x:
+    sensor: "Hello,World"
+    
+#sensor:
+#  platform: lora_sx126x     
+
+#text_sensor:
+#  - platform: lora_sx126x
+#    name: "LoRa Device Id"
+#    id:    devid
 
 

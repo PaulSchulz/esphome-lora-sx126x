@@ -1,0 +1,65 @@
+* Introduction
+
+This repository is "Work in Progress"
+
+* Development Comments
+
+This esphome component currently does some things which are not encouraged by
+the ESPHome Core and Component developers.
+
+It is always hoped that this component will become compliant enough to be
+included in ESPHome, but in the meantime, it can be included in your ESPHome
+build by either cloning this repository locally and adding an external_component
+with a local source; or by including the github repository directly as an
+external_component.
+
+#+begin_src yaml
+  external_components:
+    - source:
+        type: local
+        path: esphome/components 
+        components: ["lora_sx126x"]
+#+end_src
+
+and
+
+#+begin_src yaml
+  external_components:
+    - source:
+      type: git
+      url: https://github.com/PaulSchulz/esphome-lora-sc126x
+      ref: main
+    components: ["lora_sx126x"]
+#+end_src
+
+** Things to fix
+*** Direct use of SPI and SX126x-Arduino libraries
+If possible, the SX126x-Arduino library needs to be implemented natively in
+ESPHome, to make use of the native ESPHome SPI code.
+
+It is uncertain at the moment whether this component can be used generally with
+other devices that use the same SPI interface.
+
+* Example YAML
+
+Proposed example YAML configuration
+#+begin_src yaml
+  esphome:
+    name: "lora-sx126x"
+    libraries:
+      - "SPI"
+      - "Ticker"
+      - "SX126x-Arduino"
+
+  ...
+
+  external_components:
+    - source:
+        type: local
+        path: esphome/components
+
+  ...
+
+  lora_sx126x:
+    sensor: name
+#+end_src

@@ -2,12 +2,10 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-# CODEOWNERS = ["@paulschulz"]
+CODEOWNERS = ["@PaulSchulz"]
 AUTO_LOAD = [ "sensor"]
 # MULTI_CONF = True
-
 DEPENDANCIES = ["spi"]
-CODEOWNERS = ["@paulschulz"]
 
 lora_sx126x_ns = cg.esphome_ns.namespace("lora_sx126x")
 
@@ -27,7 +25,8 @@ CONF_RX_TIMEOUT_VALUE = 3000
 CONF_TX_TIMEOUT_VALUE = 3000
 
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(LoraSX126X)
+    cv.GenerateID(): cv.declare_id(LoraSX126X),
+    cv.Required('sensor'): cv.string
 }).extend(cv.COMPONENT_SCHEMA)
 
 def to_code(config):
