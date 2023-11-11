@@ -1,6 +1,12 @@
+#+TITLE: ESPHome Lora SX126X Component
+
 * Introduction
 
+
 This repository is "Work in Progress"
+
+** Hardware
+This component is being developed on the Heltec
 
 * Development Comments
 
