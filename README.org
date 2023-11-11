@@ -149,6 +149,13 @@ Proposed example YAML configuration
       id: message
       name: LoRa Message
 
+  # Is there a component for this in ESPHome?
+  # Sending a string to a component.
+  text_message:
+    - platform: lora_sx126x
+      id: send_message
+      name: Send LoRa Message
+
   binary_sensor:
     - platform: lora_sx126x
       id: lora_sensor
