@@ -11,17 +11,18 @@
 * Introduction
 This repository is "Work in Progress"
 
-The aim is to make the LoRa radio, for both LoRa and LoRaWAN, available for use
-in ESPHome. In the process, it is hoped that the use of this SX126X can be as
-easy as possible and in most cases wholly driven from the ESPHome YAML files.
+The aim is to make the LoRa radio available, for both LoRa and LoRaWAN modes, in
+ESPHome. In the process, it is hoped that the use of this SX126X can be as easy
+as possible and in most cases wholly driven from the ESPHome YAML files.
 
 ** Hardware
 This component is being developed on the Heltec V3 Development Boards.
 Namely:
 
-- Heltec Wifi Lora 32 V3
-- Heltec Wireless Lite V3
-
+- [[https://heltec.org/project/wifi-lora-32-v3/][Heltec Wifi LoRa 32 (V3)]] - heltec_wifi_kit_32_V3 (in expressif)
+- [[https://heltec.org/project/wireless-stick-v3/][Heltec Wireless Stick (V3)]] - heltec_wireless_stick_V3
+- [[https://heltec.org/product/wireless-stick-lite-v3/][Heltec Wireless Stick Lite (V3)]] - heltec_wireless_stick_lite_V3
+  
 At the present time, these boards are not available for specifying in the
 ESPHome YAML file (when using the Arduino framework). In order to make these
 boards work with the available version of ESPHome, the following YAML is required:
@@ -32,6 +33,9 @@ esp32:
   framework:
     type: arduino
 #+end_src
+
+The place where these boards are defined in the platform-espessif32 project is
+[[https://github.com/platformio/platform-espressif32/tree/develop/boards][here]].
 
 ** Testing and Usage
 The files *lora-sx126x.yaml* and *secret.yaml* provide a example of how to use the
