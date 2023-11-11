@@ -1,7 +1,13 @@
 #+TITLE: ESPHome Lora SX126X Component (lora_sx136x)
 
-* Introduction
+* Contents :TOC:
+- [[#introduction][Introduction]]
+  - [[#hardware][Hardware]]
+- [[#development-comments][Development Comments]]
+  - [[#considerations--things-to-fix][Considerations / Things to fix]]
+- [[#example-yaml][Example YAML]]
 
+* Introduction
 This repository is "Work in Progress"
 
 The aim is to make the LoRa radio, for both LoRa and LoRaWAN, available for use
@@ -56,7 +62,7 @@ and
     components: ["lora_sx126x"]
 #+end_src
 
-** Things to fix
+** Considerations / Things to fix
 *** Direct use of SPI and SX126x-Arduino libraries
 If possible, the SX126x-Arduino library needs to be implemented natively in
 ESPHome, to make use of the native ESPHome SPI code.
@@ -74,8 +80,6 @@ Proposed example YAML configuration
       - "SPI"
       - "Ticker"
       - "SX126x-Arduino"
-
-      
 
   ...
 
