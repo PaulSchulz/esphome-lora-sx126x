@@ -3,6 +3,7 @@
 * Contents :TOC:
 - [[#introduction][Introduction]]
   - [[#hardware][Hardware]]
+  - [[#testing-and-usage][Testing and Usage]]
 - [[#development-comments][Development Comments]]
   - [[#considerations--things-to-fix][Considerations / Things to fix]]
 - [[#example-yaml][Example YAML]]
@@ -32,8 +33,16 @@ esp32:
     type: arduino
 #+end_src
 
-* Development Comments
+** Testing and Usage
+The files *lora-sx126x.yaml* and *secret.yaml* provide a example of how to use the
+integration. To use with a working version of ESPHome, edit *secret.yaml* to add
+your local Wifi details, then run:
 
+#+begin_src bash
+  esphome run lora-sx126x.yaml
+#+end_src
+
+* Development Comments
 This esphome component currently does some things which are not encouraged by
 the ESPHome Core and Component developers.
 
@@ -41,18 +50,18 @@ It is always hoped that this component will become compliant enough to be
 included in ESPHome, but in the meantime, it can be included in your ESPHome
 build by either cloning this repository locally and adding an external_component
 with a local source; or by including the github repository directly as an
-external_component.
+external_component. See the [[https://esphome.io/components/external_components.html][External Components]] documentation.
 
+Local source for external component:
 #+begin_src yaml
   external_components:
     - source:
         type: local
         path: esphome/components 
-        components: ["lora_sx126x"]
+      components: ["lora_sx126x"]
 #+end_src
 
-and
-
+and, Github source for external component
 #+begin_src yaml
   external_components:
     - source:
