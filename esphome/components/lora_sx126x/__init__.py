@@ -26,9 +26,14 @@ CONF_TX_TIMEOUT_VALUE = 3000
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
-    cv.Required('sensor'): cv.string
+    cv.Required('name'): cv.string,
+    cv.Required('frequency'): cv.int_
+    # cv.Optional('tx_output_power', default=CONF_TX_OUTPUT_POWER): cv.int_
+
 }).extend(cv.COMPONENT_SCHEMA)
 
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
+
+    cg.add(var.set_frequency(config['frequency']))

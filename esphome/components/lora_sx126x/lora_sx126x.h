@@ -9,16 +9,20 @@
 namespace esphome {
 namespace lora_sx126x {
 
-    class LoraSX126X : public sensor::Sensor, public Component {
-        //    class LoraSX126X : public Component {
-        public:
-        void setup() override;
-        void loop() override;
-        void dump_config() override;
+class LoraSX126X : public sensor::Sensor, public Component {
+    //    class LoraSX126X : public Component {
+public:
+    void setup() override;
+    void loop() override;
+    void dump_config() override;
 
-    protected:
-        uint8_t deviceId[8];
-    };
+    void set_frequency(uint32_t frequency) { this->frequency_ = frequency; }
+
+
+protected:
+    uint8_t deviceId[8];
+    uint32_t frequency_;
+};
 
 
 

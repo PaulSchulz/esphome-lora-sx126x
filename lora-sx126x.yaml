@@ -47,11 +47,41 @@ web_server:
 #    scl: 18
 
 lora_sx126x:
-    sensor: "Hello,World"
-    
-#sensor:
-#  platform: lora_sx126x     
+  name: "Base Station"
+  frequency: 915000000
+#  sensor:
+#    - id: lora_sensor
+#      name: "Hello,World"
+#      entity_id: sensor.lora_sensor    
 
+binary_sensor:
+  - platform: gpio
+    pin: 5
+    id: trigger
+    name: "Trigger (In)"
+    on_press:
+      then:
+        - switch.turn_on: monitor_switch    
+    on_release:
+      then:
+        - switch.turn_off: monitor_switch
+
+output:
+  - platform: gpio
+    pin: 6
+    id: monitor
+  - platform: gpio
+    pin: 35
+    id: monitor_led
+    
+switch:
+  - platform: output
+    id: monitor_switch
+    name: "Monitor Output (Out)"
+    output:
+#     monitor
+      monitor_led
+      
 #text_sensor:
 #  - platform: lora_sx126x
 #    name: "LoRa Device Id"

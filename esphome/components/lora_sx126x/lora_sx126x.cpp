@@ -24,6 +24,8 @@ static const char *TAG = "lora_sx126x.component";
                  deviceId[6],
                  deviceId[7]);
 
+        ESP_LOGD(TAG, "Frequency: %d", frequency_);
+
         this->publish_state(1.00);
     }
 
