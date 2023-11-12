@@ -115,34 +115,32 @@ Proposed example YAML configuration
 #+begin_src yaml
   lora_sx126x:
     # optional, with sensile defaults, if possible from board id.
-    sx126x:
-      pin_lora_reset: 12
-      pin_lora_dio_1: 14
-      pin_lora_busy:  13
-      pin_lora_nss:    8
-      pin_lora_sclk:   9
-      pin_lora_miso:  11
-      pin_lora_mosi:  10
-      radio_txen:     -1
-      radio_rxen:     -1
-      use_dio2_ant_switch: true
-      use_dio3_tcx0:       true
-      use_dxo3_ant_switch: false
+    pin_lora_reset: 12
+    pin_lora_dio_1: 14
+    pin_lora_busy:  13
+    pin_lora_nss:    8
+    pin_lora_sclk:   9
+    pin_lora_miso:  11
+    pin_lora_mosi:  10
+    radio_txen:     -1
+    radio_rxen:     -1
+    use_dio2_ant_switch: true
+    use_dio3_tcx0:       true
+    use_dxo3_ant_switch: false
 
-    lora:
-      # required - depends on region and frequency band being used
-      rf_frequency: 915000000
-      # optional (sensible defaults)
-      tx_output_power:       22
-      lora_bandwidth:         0
-      lora_spreading_factor:  7
-      lora_codingrate:        1
-      lora_preamble_length:   8
-      lora_symbol_timeout:    0
-      lora_fix_length_layload_on: false
-      lora_iq_inversion_on:       false
-      rx_timeout_value:    3000
-      tx_timeout_value:    3000
+    # required - depends on region and frequency band being used
+    rf_frequency: 915000000
+    # optional (sensible defaults)
+    tx_output_power:       22
+    lora_bandwidth:         0
+    lora_spreading_factor:  7
+    lora_codingrate:        1
+    lora_preamble_length:   8
+    lora_symbol_timeout:    0
+    lora_fix_length_layload_on: false
+    lora_iq_inversion_on:       false
+    rx_timeout_value:    3000
+    tx_timeout_value:    3000
 
   text_sensor:
     - platform: lora_sx126x
