@@ -21,14 +21,24 @@ CONF_LORA_PREAMBLE_LENGTH  = 8          # Same for Tx and Rx
 CONF_LORA_SYMBOL_TIMEOUT   = 0          # Symbols
 CONF_LORA_FIX_LENGTH_PAYLOAD_ON = False
 CONF_LORA_IQ_INVERSION_ON       = False
-CONF_RX_TIMEOUT_VALUE = 3000
-CONF_TX_TIMEOUT_VALUE = 3000
+CONF_RX_TIMEOUT_VALUE      = 3000
+CONF_TX_TIMEOUT_VALUE      = 3000
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
     cv.Required('name'): cv.string,
-    cv.Required('frequency'): cv.int_
-    # cv.Optional('tx_output_power', default=CONF_TX_OUTPUT_POWER): cv.int_
+    cv.Required('frequency'): cv.int_,
+
+    cv.Optional('tx_output_power',       default=CONF_TX_OUTPUT_POWER):       cv.int_,
+    cv.Optional('lora_bandwidth',        default=CONF_LORA_BANDWIDTH):        cv.int_,
+    cv.Optional('lora_spreading_factor', default=CONF_LORA_SPREADING_FACTOR): cv.int_,
+    cv.Optional('lora_codingrate',       default=CONF_LORA_CODINGRATE):       cv.int_,
+    cv.Optional('lora_preamble_length',  default=CONF_LORA_PREAMBLE_LENGTH):  cv.int_,
+    cv.Optional('lora_symbol_timeout',   default=CONF_LORA_SYMBOL_TIMEOUT):   cv.int_,
+    # cv.Optional('lora_fix_length_payload_on', default=CONF_LORA_FIX_LENGTH_PAYLOAD_ON): cv.boolean,
+    # cv.Optional('lora_iq_inversion_on', default=CONF_LORA_INVERSION_ON): cv.boolean,
+    cv.Optional('rx_timeout_value',       default=CONF_RX_TIMEOUT_VALUE):     cv.int_,
+    cv.Optional('tx_timeout_value',       default=CONF_TX_TIMEOUT_VALUE):     cv.int_,
 
 }).extend(cv.COMPONENT_SCHEMA)
 
@@ -37,3 +47,14 @@ def to_code(config):
     yield cg.register_component(var, config)
 
     cg.add(var.set_frequency(config['frequency']))
+
+    cg.add(var.set_tx_output_power(config['tx_output_power']))
+    cg.add(var.set_lora_bandwidth(config['lora_bandwidth']))
+    cg.add(var.set_lora_spreading_factor(config['lora_spreading_factor']))
+    cg.add(var.set_lora_codingrate(config['lora_codingrate']))
+    cg.add(var.set_lora_preamble_length(config['lora_preamble_length']))
+    cg.add(var.set_lora_symbol_timeout(config['lora_symbol_timeout']))
+    # cg.add(var.set_lora_fix_length_payload_on(config['lora_fix_length_payload_on']))
+    # cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
+    cg.add(var.set_rx_timeout_value(config['rx_timeout_value']))
+    cg.add(var.set_tx_timeout_value(config['tx_timeout_value']))

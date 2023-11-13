@@ -3,6 +3,7 @@
 * Contents :TOC:
 - [[#introduction][Introduction]]
   - [[#hardware][Hardware]]
+  - [[#arduino-library][Arduino Library]]
   - [[#testing-and-usage][Testing and Usage]]
 - [[#development-comments][Development Comments]]
   - [[#considerations--things-to-fix][Considerations / Things to fix]]
@@ -38,6 +39,13 @@ esp32:
 
 The place where these boards are defined in the platform-espessif32 project is
 [[https://github.com/platformio/platform-espressif32/tree/develop/boards][here]].
+
+** Arduino Library
+The Arduino library being used is [[https://github.com/beegee-tokyo/SX126x-Arduino][beegee-tokyo/SX126X-Arduino]].
+
+The following header file contains the descriptions of the fields used by the
+library:
+- https://github.com/beegee-tokyo/SX126x-Arduino/blob/master/src/radio/radio.h
 
 ** Testing and Usage
 The files *lora-sx126x.yaml* and *secret.yaml* provide a example of how to use the
