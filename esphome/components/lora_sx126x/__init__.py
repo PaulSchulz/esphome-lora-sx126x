@@ -24,6 +24,20 @@ CONF_LORA_IQ_INVERSION_ON       = False
 CONF_RX_TIMEOUT_VALUE      = 3000
 CONF_TX_TIMEOUT_VALUE      = 3000
 
+
+# Hardware
+# Heltec Wifi LoRa 32 (V3) - SX126x pin configuration
+PIN_LORA_RESET = 12  # LORA RESET
+PIN_LORA_DIO_1 = 14  # LORA DIO_1
+PIN_LORA_BUSY  = 13  # LORA SPI BUSY
+PIN_LORA_NSS   =  8  # LORA SPI CS
+PIN_LORA_SCLK  =  9  # LORA SPI CLK
+PIN_LORA_MISO  = 11  # LORA SPI MISO
+PIN_LORA_MOSI  = 10  # LORA SPI MOSI
+RADIO_TXEN     = -1  # LORA ANTENNA TX ENABLE
+RADIO_RXEN     = -1  # LORA ANTENNA RX ENABLE
+
+
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
     cv.Required('name'): cv.string,
@@ -40,6 +54,16 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional('rx_timeout_value',       default=CONF_RX_TIMEOUT_VALUE):     cv.int_,
     cv.Optional('tx_timeout_value',       default=CONF_TX_TIMEOUT_VALUE):     cv.int_,
 
+    cv.Optional('pin_lora_reset',         default=PIN_LORA_RESET):            cv.int_,
+    cv.Optional('pin_lora_dio_1',         default=PIN_LORA_DIO_1):            cv.int_,
+    cv.Optional('pin_lora_busy',          default=PIN_LORA_BUSY):             cv.int_,
+    cv.Optional('pin_lora_nss',           default=PIN_LORA_NSS):              cv.int_,
+    cv.Optional('pin_lora_sclk',          default=PIN_LORA_SCLK):             cv.int_,
+    cv.Optional('pin_lora_miso',          default=PIN_LORA_MISO):             cv.int_,
+    cv.Optional('pin_lora_mosi',          default=PIN_LORA_MOSI):             cv.int_,
+    cv.Optional('radio_txen',             default=RADIO_TXEN):                cv.int_,
+    cv.Optional('radio_rxen',             default=RADIO_RXEN):                cv.int_,
+
 }).extend(cv.COMPONENT_SCHEMA)
 
 def to_code(config):
@@ -47,7 +71,6 @@ def to_code(config):
     yield cg.register_component(var, config)
 
     cg.add(var.set_frequency(config['frequency']))
-
     cg.add(var.set_tx_output_power(config['tx_output_power']))
     cg.add(var.set_lora_bandwidth(config['lora_bandwidth']))
     cg.add(var.set_lora_spreading_factor(config['lora_spreading_factor']))
@@ -58,3 +81,13 @@ def to_code(config):
     # cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
     cg.add(var.set_rx_timeout_value(config['rx_timeout_value']))
     cg.add(var.set_tx_timeout_value(config['tx_timeout_value']))
+
+    cg.add(var.set_pin_lora_reset(config['pin_lora_reset']))
+    cg.add(var.set_pin_lora_dio_1(config['pin_lora_dio_1']))
+    cg.add(var.set_pin_lora_busy(config['pin_lora_busy']))
+    cg.add(var.set_pin_lora_nss(config['pin_lora_nss']))
+    cg.add(var.set_pin_lora_sclk(config['pin_lora_sclk']))
+    cg.add(var.set_pin_lora_miso(config['pin_lora_miso']))
+    cg.add(var.set_pin_lora_mosi(config['pin_lora_mosi']))
+    cg.add(var.set_radio_txen(config['radio_txen']))
+    cg.add(var.set_radio_rxen(config['radio_rxen']))

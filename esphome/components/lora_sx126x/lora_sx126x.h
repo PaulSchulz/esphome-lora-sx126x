@@ -35,8 +35,20 @@ public:
     void set_rx_timeout_value (int16_t rx_timeout_value) { this->rx_timeout_value_ = rx_timeout_value; }
     void set_tx_timeout_value (int16_t tx_timeout_value) { this->tx_timeout_value_ = tx_timeout_value; }
 
+    void set_pin_lora_reset (int16_t pin_lora_reset) { this->pin_lora_reset_ = pin_lora_reset; }
+    void set_pin_lora_dio_1 (int16_t pin_lora_dio_1) { this->pin_lora_dio_1_ = pin_lora_dio_1; }
+    void set_pin_lora_busy (int16_t pin_lora_busy) { this->pin_lora_busy_ = pin_lora_busy; }
+    void set_pin_lora_nss (int16_t pin_lora_nss) { this->pin_lora_nss_ = pin_lora_nss; }
+    void set_pin_lora_sclk (int16_t pin_lora_sclk) { this->pin_lora_sclk_ = pin_lora_sclk; }
+    void set_pin_lora_miso (int16_t pin_lora_miso) { this->pin_lora_miso_ = pin_lora_miso; }
+    void set_pin_lora_mosi (int16_t pin_lora_mosi) { this->pin_lora_mosi_ = pin_lora_mosi; }
+    void set_radio_txen (int16_t radio_txen) { this->radio_txen_ = radio_txen; }
+    void set_radio_rxen (int16_t radio_rxen) { this->radio_rxen_ = radio_rxen; }
+
+
 protected:
     uint8_t  deviceId[8];
+
     uint32_t frequency_;
     uint8_t  tx_output_power_;
     uint8_t  lora_bandwidth_;
@@ -48,6 +60,17 @@ protected:
     uint8_t  lora_iq_inversion_on_;
     uint16_t rx_timeout_value_;
     uint16_t tx_timeout_value_;
+
+    int8_t pin_lora_reset_;
+    int8_t pin_lora_dio_1_;
+    int8_t pin_lora_busy_;
+    int8_t pin_lora_nss_;
+    int8_t pin_lora_sclk_;
+    int8_t pin_lora_miso_;
+    int8_t pin_lora_mosi_;
+    int8_t radio_txen_;
+    int8_t radio_rxen_;
+
 
 };
 
