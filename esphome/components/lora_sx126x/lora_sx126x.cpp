@@ -14,27 +14,34 @@ static const char *TAG = "lora_sx126x.component";
 
 #define BUFFER_SIZE 64 // Define the payload size here
 
-hw_config hwConfig;
-static RadioEvents_t RadioEvents;
-
-void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr ) {
-    char rxpacket[BUFFER_SIZE];
-    memcpy(rxpacket, payload, size );
-    rxpacket[size]='\0';
-
-    // Radio.Sleep( );
-    ESP_LOGD(TAG, "Received packet \"%s\" with rssi:%d length:%d",rxpacket,rssi,size);
-
-    // Set Radio to receive next packet
-    Radio.Rx(3000);
-    // Radio.Rx(rx_timeout_value_);
-    // Radio.Rx(lora_sx126x::rx_timeout_value_);
-}
 
 namespace esphome {
     namespace lora_sx126x {
 
+        hw_config hwConfig;
+        static RadioEvents_t RadioEvents;
+        char rxpacket[BUFFER_SIZE];
+
+        void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
+            memcpy(rxpacket, payload, size);
+            rxpacket[size]='\0';
+
+            Radio.Sleep();
+            ESP_LOGD(TAG, "Received packet \"%s\" with rssi:%d length:%d",rxpacket,rssi,size);
+
+            // This doesn't work
+            // this->publish_state(1.0 * rssi);
+            //Publish_State(1.0 * rssi);
+
+            // Set Radio to receive next packet
+            Radio.Rx(5000);
+            // Radio.Rx(rx_timeout_value_);
+            // Radio.Rx(lora_sx126x::rx_timeout_value_);
+        }
+
         void LoraSX126X::setup() {
+            int result;
+
             ESP_LOGD(TAG, "LoRa SX126X Setup (SX1262)");
 
             // Define the HW configuration between MCU and SX126x
@@ -74,7 +81,6 @@ namespace esphome {
             // Initialize the Radio callbacks
             RadioEvents.TxDone    = NULL;        // OnTxDone;
             RadioEvents.RxDone    = OnRxDone;
-
             RadioEvents.TxTimeout = NULL;        // OnTxTimeout;
             RadioEvents.RxTimeout = NULL;        // OnRxTimeout;
             RadioEvents.RxError   = NULL;        // OnRxError;
@@ -96,37 +102,52 @@ namespace esphome {
             // Start LoRa
             ESP_LOGD(TAG, "Calling Radio.Rx()");
             Radio.Rx(rx_timeout_value_);
+            // Radio.Rx(3000);
+
         }
+
+        unsigned long previousMillis = 0;
+        unsigned long interval = 10000UL;
 
         void LoraSX126X::loop() {
+            // Debugging
+            // This will be called very often after setup time.
+            unsigned long currentMillis = millis();
+            // Keep alive message
+            if(currentMillis - previousMillis > interval)
+                {
+                    previousMillis = currentMillis;
+                    ESP_LOGD(TAG, "Tick");
+                    // Radio.Rx(0);
+                }
 
         }
 
-        void LoraSX126X::dump_config() {
-            ESP_LOGCONFIG(TAG, "LoRa SX126X Config");
+    void LoraSX126X::dump_config() {
+        ESP_LOGCONFIG(TAG, "LoRa SX126X Config");
+        ESP_LOGCONFIG(TAG, "  Pin LoRa Reset: %2d", pin_lora_reset_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa DIO 1: %2d", pin_lora_dio_1_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa Busy:  %2d", pin_lora_busy_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa NSS:   %2d", pin_lora_nss_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa SCLK:  %2d", pin_lora_sclk_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa MISO:  %2d", pin_lora_miso_);
+        ESP_LOGCONFIG(TAG, "  Pin LoRa MOSI:  %2d", pin_lora_mosi_);
+        ESP_LOGCONFIG(TAG, "  Radio TXEN:     %2d", radio_txen_);
+        ESP_LOGCONFIG(TAG, "  Radio RXEN:     %2d", radio_rxen_);
+        ESP_LOGCONFIG(TAG, "");
+        ESP_LOGCONFIG(TAG, "  Frequency:          %9d Hz", frequency_);
+        ESP_LOGCONFIG(TAG, "  Tx Output Power:          %3d dBm", tx_output_power_);
+        ESP_LOGCONFIG(TAG, "  LoRa Bandwidth:           %3d", lora_bandwidth_);
+        ESP_LOGCONFIG(TAG, "  LoRa Spreading Factor:    %3d", lora_spreading_factor_);
+        ESP_LOGCONFIG(TAG, "  LoRa Codingrate:          %3d", lora_codingrate_);
+        ESP_LOGCONFIG(TAG, "  LoRa Preable Length:      %3d", lora_preamble_length_);
+        ESP_LOGCONFIG(TAG, "  LoRa Symbol Timeout:      %3d", lora_symbol_timeout_);
+        ESP_LOGCONFIG(TAG, "  LoRa Fix Length Payload On: %d", lora_fix_length_payload_on_);
+        ESP_LOGCONFIG(TAG, "  LoRa IQ Inversion On:       %d", lora_iq_inversion_on_);
+        ESP_LOGCONFIG(TAG, "  Rx Timeout Value:       %5d ms", rx_timeout_value_);
+        ESP_LOGCONFIG(TAG, "  Tx Timeout Value:       %5d ms", tx_timeout_value_);
 
-            ESP_LOGCONFIG(TAG, "  Frequency:          %9d Hz", frequency_);
-            ESP_LOGCONFIG(TAG, "  Tx Output Power:          %3d dBm", tx_output_power_);
-            ESP_LOGCONFIG(TAG, "  LoRa Bandwidth:           %3d", lora_bandwidth_);
-            ESP_LOGCONFIG(TAG, "  LoRa Spreading Factor:    %3d", lora_spreading_factor_);
-            ESP_LOGCONFIG(TAG, "  LoRa Codingrate:          %3d", lora_codingrate_);
-            ESP_LOGCONFIG(TAG, "  LoRa Preable Length:      %3d", lora_preamble_length_);
-            ESP_LOGCONFIG(TAG, "  LoRa Symbol Timeout:      %3d", lora_symbol_timeout_);
-            ESP_LOGCONFIG(TAG, "  LoRa Fix Length Payload On: %d", lora_fix_length_payload_on_);
-            ESP_LOGCONFIG(TAG, "  LoRa IQ Inversion On:       %d", lora_iq_inversion_on_);
-            ESP_LOGCONFIG(TAG, "  Rx Timeout Value:       %5d ms", rx_timeout_value_);
-            ESP_LOGCONFIG(TAG, "  Tx Timeout Value:       %5d ms", tx_timeout_value_);
-            ESP_LOGCONFIG(TAG, "");
-            ESP_LOGCONFIG(TAG, "  Pin LoRa Reset: %2d", pin_lora_reset_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa DIO 1: %2d", pin_lora_dio_1_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa Busy:  %2d", pin_lora_busy_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa NSS:   %2d", pin_lora_nss_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa SCLK:  %2d", pin_lora_sclk_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa MISO:  %2d", pin_lora_miso_);
-            ESP_LOGCONFIG(TAG, "  Pin LoRa MOSI:  %2d", pin_lora_mosi_);
-            ESP_LOGCONFIG(TAG, "  Radio TXEN:     %2d", radio_txen_);
-            ESP_LOGCONFIG(TAG, "  Radio RXEN:     %2d", radio_rxen_);
-        }
+    }
 
-}  // namespace lora_sx126xESP_LOGCONFIG(TAG, "  Pin LoRa Reset:  %2d", pin_lora_reset_);
+    }  // namespace lora_sx126x
 }  // namespace esphome

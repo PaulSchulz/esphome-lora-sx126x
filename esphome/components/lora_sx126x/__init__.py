@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
 CODEOWNERS = ["@PaulSchulz"]
-AUTO_LOAD = [ "sensor"]
+AUTO_LOAD = [ "sensor","text_sensor"]
 # MULTI_CONF = True
 DEPENDANCIES = ["spi"]
 
@@ -11,19 +11,6 @@ lora_sx126x_ns = cg.esphome_ns.namespace("lora_sx126x")
 
 # empty_component_ns = cg.esphome_ns.namespace('empty_component')
 LoraSX126X = lora_sx126x_ns.class_('LoraSX126X', cg.Component)
-
-CONF_RF_FREQUENCY          = 915000000  # Hz
-CONF_TX_OUTPUT_POWER       = 22         # dBm
-CONF_LORA_BANDWIDTH        = 0	        # [0: 125 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
-CONF_LORA_SPREADING_FACTOR = 7          # [SF7..SF12]
-CONF_LORA_CODINGRATE       = 1	        # [1: 4/5, 2: 4/6,  3: 4/7,  4: 4/8]
-CONF_LORA_PREAMBLE_LENGTH  = 8          # Same for Tx and Rx
-CONF_LORA_SYMBOL_TIMEOUT   = 0          # Symbols
-CONF_LORA_FIX_LENGTH_PAYLOAD_ON = False
-CONF_LORA_IQ_INVERSION_ON       = False
-CONF_RX_TIMEOUT_VALUE      = 3000
-CONF_TX_TIMEOUT_VALUE      = 3000
-
 
 # Hardware
 # Heltec Wifi LoRa 32 (V3) - SX126x pin configuration
@@ -37,32 +24,55 @@ PIN_LORA_MOSI  = 10  # LORA SPI MOSI
 RADIO_TXEN     = -1  # LORA ANTENNA TX ENABLE
 RADIO_RXEN     = -1  # LORA ANTENNA RX ENABLE
 
+# LoRa Radio Parameters
+CONF_RF_FREQUENCY          = 915000000  # Hz
+CONF_TX_OUTPUT_POWER       = 22         # dBm
+CONF_LORA_BANDWIDTH        = 0	        # [0: 125 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
+CONF_LORA_SPREADING_FACTOR = 7          # [SF7..SF12]
+CONF_LORA_CODINGRATE       = 1	        # [1: 4/5, 2: 4/6,  3: 4/7,  4: 4/8]
+CONF_LORA_PREAMBLE_LENGTH  = 8          # Same for Tx and Rx
+CONF_LORA_SYMBOL_TIMEOUT   = 0          # Symbols
+CONF_LORA_FIX_LENGTH_PAYLOAD_ON = 0     # Default: False (0)
+CONF_LORA_IQ_INVERSION_ON       = 0     # Default: False (0)
+CONF_RX_TIMEOUT_VALUE      = 3000
+CONF_TX_TIMEOUT_VALUE      = 3000
+
+# LoRaWAN Parameters
+CONF_LORAWAN_REGION        = 'AU915';
+CONF_LORAWAN_APPID         = '';
+CONF_LORAWAN_APPKEY        = '';
+CONF_LORAWAN_DEVID         = '';
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
     cv.Required('name'): cv.string,
     cv.Required('frequency'): cv.int_,
 
-    cv.Optional('tx_output_power',       default=CONF_TX_OUTPUT_POWER):       cv.int_,
-    cv.Optional('lora_bandwidth',        default=CONF_LORA_BANDWIDTH):        cv.int_,
-    cv.Optional('lora_spreading_factor', default=CONF_LORA_SPREADING_FACTOR): cv.int_,
-    cv.Optional('lora_codingrate',       default=CONF_LORA_CODINGRATE):       cv.int_,
-    cv.Optional('lora_preamble_length',  default=CONF_LORA_PREAMBLE_LENGTH):  cv.int_,
-    cv.Optional('lora_symbol_timeout',   default=CONF_LORA_SYMBOL_TIMEOUT):   cv.int_,
-    # cv.Optional('lora_fix_length_payload_on', default=CONF_LORA_FIX_LENGTH_PAYLOAD_ON): cv.boolean,
-    # cv.Optional('lora_iq_inversion_on', default=CONF_LORA_INVERSION_ON): cv.boolean,
-    cv.Optional('rx_timeout_value',       default=CONF_RX_TIMEOUT_VALUE):     cv.int_,
-    cv.Optional('tx_timeout_value',       default=CONF_TX_TIMEOUT_VALUE):     cv.int_,
+    cv.Optional('tx_output_power',            default=CONF_TX_OUTPUT_POWER):            cv.int_,
+    cv.Optional('lora_bandwidth',             default=CONF_LORA_BANDWIDTH):             cv.int_,
+    cv.Optional('lora_spreading_factor',      default=CONF_LORA_SPREADING_FACTOR):      cv.int_,
+    cv.Optional('lora_codingrate',            default=CONF_LORA_CODINGRATE):            cv.int_,
+    cv.Optional('lora_preamble_length',       default=CONF_LORA_PREAMBLE_LENGTH):       cv.int_,
+    cv.Optional('lora_symbol_timeout',        default=CONF_LORA_SYMBOL_TIMEOUT):        cv.int_,
+    cv.Optional('lora_fix_length_payload_on', default=CONF_LORA_FIX_LENGTH_PAYLOAD_ON): cv.int_,
+    cv.Optional('lora_iq_inversion_on',       default=CONF_LORA_IQ_INVERSION_ON):       cv.int_,
+    cv.Optional('rx_timeout_value',           default=CONF_RX_TIMEOUT_VALUE):           cv.int_,
+    cv.Optional('tx_timeout_value',           default=CONF_TX_TIMEOUT_VALUE):           cv.int_,
 
-    cv.Optional('pin_lora_reset',         default=PIN_LORA_RESET):            cv.int_,
-    cv.Optional('pin_lora_dio_1',         default=PIN_LORA_DIO_1):            cv.int_,
-    cv.Optional('pin_lora_busy',          default=PIN_LORA_BUSY):             cv.int_,
-    cv.Optional('pin_lora_nss',           default=PIN_LORA_NSS):              cv.int_,
-    cv.Optional('pin_lora_sclk',          default=PIN_LORA_SCLK):             cv.int_,
-    cv.Optional('pin_lora_miso',          default=PIN_LORA_MISO):             cv.int_,
-    cv.Optional('pin_lora_mosi',          default=PIN_LORA_MOSI):             cv.int_,
-    cv.Optional('radio_txen',             default=RADIO_TXEN):                cv.int_,
-    cv.Optional('radio_rxen',             default=RADIO_RXEN):                cv.int_,
+    cv.Optional('pin_lora_reset', default=PIN_LORA_RESET): cv.int_,
+    cv.Optional('pin_lora_dio_1', default=PIN_LORA_DIO_1): cv.int_,
+    cv.Optional('pin_lora_busy',  default=PIN_LORA_BUSY):  cv.int_,
+    cv.Optional('pin_lora_nss',   default=PIN_LORA_NSS):   cv.int_,
+    cv.Optional('pin_lora_sclk',  default=PIN_LORA_SCLK):  cv.int_,
+    cv.Optional('pin_lora_miso',  default=PIN_LORA_MISO):  cv.int_,
+    cv.Optional('pin_lora_mosi',  default=PIN_LORA_MOSI):  cv.int_,
+    cv.Optional('radio_txen',     default=RADIO_TXEN):     cv.int_,
+    cv.Optional('radio_rxen',     default=RADIO_RXEN):     cv.int_,
+
+    cv.Optional('lorawan_region', default=CONF_LORAWAN_REGION): cv.string,
+    cv.Optional('lorawan_appid',  default=CONF_LORAWAN_APPID):  cv.string,
+    cv.Optional('lorawan_appkey', default=CONF_LORAWAN_APPKEY): cv.string,
+    cv.Optional('lorawan_devid',  default=CONF_LORAWAN_DEVID):  cv.string,
 
 }).extend(cv.COMPONENT_SCHEMA)
 
@@ -77,8 +87,8 @@ def to_code(config):
     cg.add(var.set_lora_codingrate(config['lora_codingrate']))
     cg.add(var.set_lora_preamble_length(config['lora_preamble_length']))
     cg.add(var.set_lora_symbol_timeout(config['lora_symbol_timeout']))
-    # cg.add(var.set_lora_fix_length_payload_on(config['lora_fix_length_payload_on']))
-    # cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
+    cg.add(var.set_lora_fix_length_payload_on(config['lora_fix_length_payload_on']))
+    cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
     cg.add(var.set_rx_timeout_value(config['rx_timeout_value']))
     cg.add(var.set_tx_timeout_value(config['tx_timeout_value']))
 

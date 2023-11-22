@@ -45,9 +45,16 @@ public:
     void set_radio_txen (int16_t radio_txen) { this->radio_txen_ = radio_txen; }
     void set_radio_rxen (int16_t radio_rxen) { this->radio_rxen_ = radio_rxen; }
 
-
 protected:
-    uint8_t  deviceId[8];
+    int8_t pin_lora_reset_;
+    int8_t pin_lora_dio_1_;
+    int8_t pin_lora_busy_;
+    int8_t pin_lora_nss_;
+    int8_t pin_lora_sclk_;
+    int8_t pin_lora_miso_;
+    int8_t pin_lora_mosi_;
+    int8_t radio_txen_;
+    int8_t radio_rxen_;
 
     uint32_t frequency_;
     uint8_t  tx_output_power_;
@@ -61,20 +68,9 @@ protected:
     uint16_t rx_timeout_value_;
     uint16_t tx_timeout_value_;
 
-    int8_t pin_lora_reset_;
-    int8_t pin_lora_dio_1_;
-    int8_t pin_lora_busy_;
-    int8_t pin_lora_nss_;
-    int8_t pin_lora_sclk_;
-    int8_t pin_lora_miso_;
-    int8_t pin_lora_mosi_;
-    int8_t radio_txen_;
-    int8_t radio_rxen_;
-
+    uint8_t  deviceId[8];
 
 };
-
-
 
 }  // namespace lora_sx126x
 }  // namespace esphome
