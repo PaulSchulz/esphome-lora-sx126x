@@ -45,6 +45,10 @@ public:
     void set_radio_txen (int16_t radio_txen) { this->radio_txen_ = radio_txen; }
     void set_radio_rxen (int16_t radio_rxen) { this->radio_rxen_ = radio_rxen; }
 
+    void     packets_rx_zero(void) { this->lora_packets_rx_ = 0; };
+    void     packets_rx_incrument(void) { this->lora_packets_rx_++; };
+    uint16_t packets_rx(void) { return lora_packets_rx_; };
+
 protected:
     int8_t pin_lora_reset_;
     int8_t pin_lora_dio_1_;
@@ -69,6 +73,8 @@ protected:
     uint16_t tx_timeout_value_;
 
     uint8_t  deviceId[8];
+
+    uint16_t lora_packets_rx_;
 
 };
 

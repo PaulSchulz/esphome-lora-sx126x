@@ -57,7 +57,7 @@ lora_sx126x:
 # radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
 # radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
 
-  name: "Example Transmitter"
+  name: "Example"
   frequency: 915000000             # Hz
 # tx_output_power: 22              # dBm
 # lora_bandwidth: 0                # [0: 125 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]

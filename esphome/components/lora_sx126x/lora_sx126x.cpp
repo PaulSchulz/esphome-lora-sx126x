@@ -14,13 +14,14 @@ static const char *TAG = "lora_sx126x.component";
 
 #define BUFFER_SIZE 64 // Define the payload size here
 
-
 namespace esphome {
     namespace lora_sx126x {
 
         hw_config hwConfig;
         static RadioEvents_t RadioEvents;
         char rxpacket[BUFFER_SIZE];
+
+        LoraSX126X * radiolib;
 
         void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
             memcpy(rxpacket, payload, size);
@@ -29,9 +30,13 @@ namespace esphome {
             Radio.Sleep();
             ESP_LOGD(TAG, "Received packet \"%s\" with rssi:%d length:%d",rxpacket,rssi,size);
 
+            radiolib->packets_rx_incrument();
+            ESP_LOGD(TAG, "Packet count: %d",radiolib->packets_rx());
+
             // This doesn't work
             // this->publish_state(1.0 * rssi);
             //Publish_State(1.0 * rssi);
+            radiolib->publish_state(1.0 * rssi);
 
             // Set Radio to receive next packet
             Radio.Rx(5000);
@@ -54,8 +59,7 @@ namespace esphome {
             hwConfig.PIN_LORA_BUSY  = pin_lora_busy_;   // LORA SPI BUSY
             hwConfig.PIN_LORA_MOSI  = pin_lora_mosi_;   // LORA SPI MOSI
             hwConfig.RADIO_TXEN     = radio_txen_;      // LORA ANTENNA TX ENABLE
-            hwConfig.RADIO_RXEN     = radio_rxen_;		// LORA ANTENNA RX ENABLE
-            // Example uses an CircuitRocks Alora RFM1262 which uses DIO2 pins as antenna control
+            hwConfig.RADIO_RXEN     = radio_rxen_;		// LORA ANTENNA RX ENABLE // Example uses an CircuitRocks Alora RFM1262 which uses DIO2 pins as antenna control
             hwConfig.USE_DIO2_ANT_SWITCH = true;
             // Example uses an CircuitRocks Alora RFM1262 which uses DIO3 to control oscillator voltage
             hwConfig.USE_DIO3_TCXO = true;
@@ -74,9 +78,15 @@ namespace esphome {
                      deviceId[6],
                      deviceId[7]);
 
+            // Radio Statistics
+            this->packets_rx_zero();
+
             // Initialize the LoRa chip
             ESP_LOGD(TAG, "Calling lora_hardware_init()");
             lora_hardware_init(hwConfig);
+
+            // The following is required to access object from callbacks
+            radiolib = this;
 
             // Initialize the Radio callbacks
             RadioEvents.TxDone    = NULL;        // OnTxDone;
