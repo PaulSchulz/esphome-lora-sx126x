@@ -76,7 +76,14 @@ protected:
 
     uint16_t lora_packets_rx_;
 
-};
+}; //    class LoraSX126X : public Component {
+
+class LoraSX126Xrssi : public sensor::Sensor, public Component {
+public:
+    void setup() override;
+    void publsh (float_t rssi) { this->publish_state(rssi); }
+}; //    class LoraSX126Xrssi : public Component {
+
 
 }  // namespace lora_sx126x
 }  // namespace esphome

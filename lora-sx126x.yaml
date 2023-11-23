@@ -60,7 +60,7 @@ lora_sx126x:
   name: "Example"
   frequency: 915000000             # Hz
 # tx_output_power: 22              # dBm
-# lora_bandwidth: 0                # [0: 125 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
+# lora_bandwidth: 0                # [0: 1  25 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
 # lora_spreading_factor: 7         # [SF7..SF12]
 # lora_codingrate: 1               # [1: 4/5, 2: 4/6,  3: 4/7,  4: 4/8]
 # lora_preamble_length: 8          # Same for Tx and Rx
@@ -70,11 +70,11 @@ lora_sx126x:
 # rx_timeout_value: 3000           # ms
 # tx_timeout_value: 3000           # ms
 
-#  sensor:
-#    - id: lora_sensor
-#      name: "Hello,World"
-#      entity_id: sensor.lora_sensor    
-
+sensor:
+  - platform: lora_sx126x
+    id: lorarssi
+    name: lorarssi
+    
 binary_sensor:
   - platform: gpio
     pin: 5
