@@ -1,6 +1,5 @@
 #include "esphome.h"
 
-// #include "esphome/core/log.h"
 #include "lora_sx126x.h"
 
 #include <SX126x-Arduino.h>
@@ -21,8 +20,10 @@ namespace esphome {
         static RadioEvents_t RadioEvents;
         char rxpacket[BUFFER_SIZE];
 
-        LoraSX126X * radiolib;
-        LoraSX126Xrssi * radiolibrssi;
+        // Object references
+        LoraSX126X*     radiolib;
+        LoraSX126Xrssi* radiolibrssi;
+        LoraSX126Xpkt*  radiolibpkt;
 
         void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
             memcpy(rxpacket, payload, size);
@@ -34,15 +35,12 @@ namespace esphome {
             radiolib->packets_rx_incrument();
             ESP_LOGD(TAG, "Packet count: %d",radiolib->packets_rx());
 
-            // This doesn't work
-            // this->publish_state(1.0 * rssi);
-            //Publish_State(1.0 * rssi);
+            // Publish details to Sensor API
             radiolibrssi->publish_state(1.0 * rssi);
+            radiolibpkt->publish_state(rxpacket);
 
             // Set Radio to receive next packet
-            Radio.Rx(5000);
-            // Radio.Rx(rx_timeout_value_);
-            // Radio.Rx(lora_sx126x::rx_timeout_value_);
+            Radio.Rx(radiolib->get_rx_timeout_value());
         }
 
         void LoraSX126X::setup() {
@@ -62,10 +60,10 @@ namespace esphome {
             hwConfig.PIN_LORA_BUSY  = pin_lora_busy_;   // LORA SPI BUSY
             hwConfig.PIN_LORA_MOSI  = pin_lora_mosi_;   // LORA SPI MOSI
             hwConfig.RADIO_TXEN     = radio_txen_;      // LORA ANTENNA TX ENABLE
-            hwConfig.RADIO_RXEN     = radio_rxen_;		// LORA ANTENNA RX ENABLE // Example uses an CircuitRocks Alora RFM1262 which uses DIO2 pins as antenna control
+            hwConfig.RADIO_RXEN     = radio_rxen_;		// LORA ANTENNA RX ENABLE
             hwConfig.USE_DIO2_ANT_SWITCH = true;
             // Example uses an CircuitRocks Alora RFM1262 which uses DIO3 to control oscillator voltage
-            hwConfig.USE_DIO3_TCXO = true;
+            hwConfig.USE_DIO3_TCXO       = true;
             // Only Insight ISP4520 module uses DIO3 as antenna control
             hwConfig.USE_DIO3_ANT_SWITCH = false;
 
@@ -90,7 +88,7 @@ namespace esphome {
 
             // Initialize the Radio callbacks
             RadioEvents.TxDone    = NULL;        // OnTxDone;
-            RadioEvents.RxDone    = OnRxDone;
+            RadioEvents.RxDone    = OnRxDone;    // OnRxDone;
             RadioEvents.TxTimeout = NULL;        // OnTxTimeout;
             RadioEvents.RxTimeout = NULL;        // OnRxTimeout;
             RadioEvents.RxError   = NULL;        // OnRxError;
@@ -112,23 +110,18 @@ namespace esphome {
             // Start LoRa
             ESP_LOGD(TAG, "Calling Radio.Rx()");
             Radio.Rx(rx_timeout_value_);
-            // Radio.Rx(3000);
-
         }
 
         unsigned long previousMillis = 0;
         unsigned long interval = 10000UL;
 
         void LoraSX126X::loop() {
-            // Debugging
             // This will be called very often after setup time.
             unsigned long currentMillis = millis();
-            // Keep alive message
             if(currentMillis - previousMillis > interval)
                 {
                     previousMillis = currentMillis;
                     ESP_LOGD(TAG, "Tick");
-                    // Radio.Rx(0);
                 }
 
         }
@@ -160,7 +153,13 @@ namespace esphome {
         }
 
         void LoraSX126Xrssi::setup() {
+            // The following is required to access object from callbacks
             radiolibrssi = this;
+        }
+
+        void LoraSX126Xpkt::setup() {
+            // The following is required to access object from callbacks
+            radiolibpkt = this;
         }
 
     }  // namespace lora_sx126x

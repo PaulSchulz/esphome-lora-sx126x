@@ -11,7 +11,6 @@ namespace esphome {
 namespace lora_sx126x {
 
 class LoraSX126X : public sensor::Sensor, public Component {
-    //    class LoraSX126X : public Component {
 public:
     void setup() override;
     void loop() override;
@@ -34,6 +33,9 @@ public:
         this->lora_iq_inversion_on_ = lora_iq_inversion_on; }
     void set_rx_timeout_value (int16_t rx_timeout_value) { this->rx_timeout_value_ = rx_timeout_value; }
     void set_tx_timeout_value (int16_t tx_timeout_value) { this->tx_timeout_value_ = tx_timeout_value; }
+
+    int16_t get_rx_timeout_value (void) { return this->rx_timeout_value_; }
+    int16_t get_tx_timeout_value (void) { return this->tx_timeout_value_; }
 
     void set_pin_lora_reset (int16_t pin_lora_reset) { this->pin_lora_reset_ = pin_lora_reset; }
     void set_pin_lora_dio_1 (int16_t pin_lora_dio_1) { this->pin_lora_dio_1_ = pin_lora_dio_1; }
@@ -76,13 +78,19 @@ protected:
 
     uint16_t lora_packets_rx_;
 
-}; //    class LoraSX126X : public Component {
+}; // class LoraSX126X
 
 class LoraSX126Xrssi : public sensor::Sensor, public Component {
 public:
     void setup() override;
     void publsh (float_t rssi) { this->publish_state(rssi); }
-}; //    class LoraSX126Xrssi : public Component {
+}; // class LoraSX126Xrssi
+
+class LoraSX126Xpkt : public text_sensor::TextSensor, public Component {
+public:
+    void setup() override;
+    void publish (char * val) { this->publish_state(val); }
+}; // class LoraSX126Xpkt
 
 
 }  // namespace lora_sx126x

@@ -73,8 +73,24 @@ lora_sx126x:
 sensor:
   - platform: lora_sx126x
     id: lorarssi
-    name: lorarssi
-    
+    name: lorarssi                 # Required for publishing into API and HA 
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+  - platform: version
+    name: "ESPHome Version"
+  - platform: template
+    name: "Template Text Sensor"
+    lambda: |-
+      return {"Hello World"};
+    update_interval: 60s
+
+  - platform: lora_sx126x
+    id: packet_in
+    name: packet_in
+
 binary_sensor:
   - platform: gpio
     pin: 5
@@ -103,17 +119,4 @@ switch:
 #     monitor
       monitor_led
 
-text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: ESP IP Address
-  - platform: version
-    name: "ESPHome Version"
-  - platform: template
-    name: "Template Text Sensor"
-    lambda: |-
-      return {"Hello World"};
-    update_interval: 60s
-#  - platform: lora_sx126x
-#   name: Message In
-#   id: lora_message_in
+
