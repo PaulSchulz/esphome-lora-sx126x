@@ -127,7 +127,7 @@ Proposed example YAML configuration
 
 #+end_src
 
-[[file:webserver-screenshot.png]]
+[[file:doc/images/webserver-screenshot.png]]
 
 * Development
 ** Proposed YAML
