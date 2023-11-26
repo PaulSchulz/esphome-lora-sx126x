@@ -45,7 +45,18 @@ CONF_LORAWAN_DEVID         = '';
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
     cv.Required('name'): cv.string,
-    cv.Required('frequency'): cv.int_,
+
+    cv.Optional('pin_lora_reset', default=PIN_LORA_RESET): cv.int_,
+    cv.Optional('pin_lora_dio_1', default=PIN_LORA_DIO_1): cv.int_,
+    cv.Optional('pin_lora_busy',  default=PIN_LORA_BUSY):  cv.int_,
+    cv.Optional('pin_lora_nss',   default=PIN_LORA_NSS):   cv.int_,
+    cv.Optional('pin_lora_sclk',  default=PIN_LORA_SCLK):  cv.int_,
+    cv.Optional('pin_lora_miso',  default=PIN_LORA_MISO):  cv.int_,
+    cv.Optional('pin_lora_mosi',  default=PIN_LORA_MOSI):  cv.int_,
+    cv.Optional('radio_txen',     default=RADIO_TXEN):     cv.int_,
+    cv.Optional('radio_rxen',     default=RADIO_RXEN):     cv.int_,
+
+    cv.Required('rf_frequency'): cv.int_,
 
     cv.Optional('tx_output_power',            default=CONF_TX_OUTPUT_POWER):            cv.int_,
     cv.Optional('lora_bandwidth',             default=CONF_LORA_BANDWIDTH):             cv.int_,
@@ -58,16 +69,6 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional('rx_timeout_value',           default=CONF_RX_TIMEOUT_VALUE):           cv.int_,
     cv.Optional('tx_timeout_value',           default=CONF_TX_TIMEOUT_VALUE):           cv.int_,
 
-    cv.Optional('pin_lora_reset', default=PIN_LORA_RESET): cv.int_,
-    cv.Optional('pin_lora_dio_1', default=PIN_LORA_DIO_1): cv.int_,
-    cv.Optional('pin_lora_busy',  default=PIN_LORA_BUSY):  cv.int_,
-    cv.Optional('pin_lora_nss',   default=PIN_LORA_NSS):   cv.int_,
-    cv.Optional('pin_lora_sclk',  default=PIN_LORA_SCLK):  cv.int_,
-    cv.Optional('pin_lora_miso',  default=PIN_LORA_MISO):  cv.int_,
-    cv.Optional('pin_lora_mosi',  default=PIN_LORA_MOSI):  cv.int_,
-    cv.Optional('radio_txen',     default=RADIO_TXEN):     cv.int_,
-    cv.Optional('radio_rxen',     default=RADIO_RXEN):     cv.int_,
-
     cv.Optional('lorawan_region', default=CONF_LORAWAN_REGION): cv.string,
     cv.Optional('lorawan_appid',  default=CONF_LORAWAN_APPID):  cv.string,
     cv.Optional('lorawan_appkey', default=CONF_LORAWAN_APPKEY): cv.string,
@@ -79,17 +80,7 @@ def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
 
-    cg.add(var.set_frequency(config['frequency']))
-    cg.add(var.set_tx_output_power(config['tx_output_power']))
-    cg.add(var.set_lora_bandwidth(config['lora_bandwidth']))
-    cg.add(var.set_lora_spreading_factor(config['lora_spreading_factor']))
-    cg.add(var.set_lora_codingrate(config['lora_codingrate']))
-    cg.add(var.set_lora_preamble_length(config['lora_preamble_length']))
-    cg.add(var.set_lora_symbol_timeout(config['lora_symbol_timeout']))
-    cg.add(var.set_lora_fix_length_payload_on(config['lora_fix_length_payload_on']))
-    cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
-    cg.add(var.set_rx_timeout_value(config['rx_timeout_value']))
-    cg.add(var.set_tx_timeout_value(config['tx_timeout_value']))
+    cg.add(var.set_frequency(config['rf_frequency']))
 
     cg.add(var.set_pin_lora_reset(config['pin_lora_reset']))
     cg.add(var.set_pin_lora_dio_1(config['pin_lora_dio_1']))
@@ -100,3 +91,14 @@ def to_code(config):
     cg.add(var.set_pin_lora_mosi(config['pin_lora_mosi']))
     cg.add(var.set_radio_txen(config['radio_txen']))
     cg.add(var.set_radio_rxen(config['radio_rxen']))
+
+    cg.add(var.set_tx_output_power(config['tx_output_power']))
+    cg.add(var.set_lora_bandwidth(config['lora_bandwidth']))
+    cg.add(var.set_lora_spreading_factor(config['lora_spreading_factor']))
+    cg.add(var.set_lora_codingrate(config['lora_codingrate']))
+    cg.add(var.set_lora_preamble_length(config['lora_preamble_length']))
+    cg.add(var.set_lora_symbol_timeout(config['lora_symbol_timeout']))
+    cg.add(var.set_lora_fix_length_payload_on(config['lora_fix_length_payload_on']))
+    cg.add(var.set_lora_iq_inversion_on(config['lora_iq_inversion_on']))
+    cg.add(var.set_rx_timeout_value(config['rx_timeout_value']))
+    cg.add(var.set_tx_timeout_value(config['tx_timeout_value']))

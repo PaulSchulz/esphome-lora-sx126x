@@ -98,7 +98,7 @@ namespace esphome {
             Radio.Init(&RadioEvents);
 
             // Set Radio channel
-            Radio.SetChannel(frequency_);
+            Radio.SetChannel(rf_frequency_);
 
             // Set Radio RX configuration
             ESP_LOGD(TAG, "Calling Radio.SetRxConfig()");
@@ -138,7 +138,7 @@ namespace esphome {
             ESP_LOGCONFIG(TAG, "  Radio TXEN:     %2d", radio_txen_);
             ESP_LOGCONFIG(TAG, "  Radio RXEN:     %2d", radio_rxen_);
             ESP_LOGCONFIG(TAG, "");
-            ESP_LOGCONFIG(TAG, "  Frequency:          %9d Hz", frequency_);
+            ESP_LOGCONFIG(TAG, "  Frequency:          %9d Hz", rf_frequency_);
             ESP_LOGCONFIG(TAG, "  Tx Output Power:          %3d dBm", tx_output_power_);
             ESP_LOGCONFIG(TAG, "  LoRa Bandwidth:           %3d", lora_bandwidth_);
             ESP_LOGCONFIG(TAG, "  LoRa Spreading Factor:    %3d", lora_spreading_factor_);
@@ -149,7 +149,6 @@ namespace esphome {
             ESP_LOGCONFIG(TAG, "  LoRa IQ Inversion On:       %d", lora_iq_inversion_on_);
             ESP_LOGCONFIG(TAG, "  Rx Timeout Value:       %5d ms", rx_timeout_value_);
             ESP_LOGCONFIG(TAG, "  Tx Timeout Value:       %5d ms", tx_timeout_value_);
-
         }
 
         void LoraSX126Xrssi::setup() {

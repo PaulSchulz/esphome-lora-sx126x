@@ -47,6 +47,7 @@ web_server:
 #    scl: 18
 
 sx126x:
+  name: "LoRa Radio"
 # pin_lora_reset: 12  # LoRa Reset
 # pin-lora_dio_1: 14  # LoRa DIO_1
 # pin_lora_busy:  13  # LoRa SPI Busy
@@ -57,8 +58,7 @@ sx126x:
 # radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
 # radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
 
-  name: "Example"
-  frequency: 915000000             # Hz
+  rf_frequency: 915000000             # Hz
 # tx_output_power: 22              # dBm
 # lora_bandwidth: 0                # [0: 1  25 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
 # lora_spreading_factor: 7         # [SF7..SF12]

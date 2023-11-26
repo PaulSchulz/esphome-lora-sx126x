@@ -1,4 +1,4 @@
-#+TITLE: ESPHome Lora SX126X Component (lora_sx136x)
+#+TITLE: ESPHome Component for SX126X LoRa Radio (sx136x)
 
 * Contents :TOC:
 - [[#introduction][Introduction]]
@@ -110,10 +110,12 @@ Proposed example YAML configuration
     - source:
         type: local
         path: esphome/components
+      components: ["sx126x]
 
   ...
 
   sx126x:
+    rf_frequency: 915000000          # Manditory for user to set
 
   sensor:
     - platform: sx126x

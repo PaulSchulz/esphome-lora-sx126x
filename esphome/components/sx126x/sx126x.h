@@ -17,7 +17,7 @@ public:
     void dump_config() override;
 
     // void set_device_id(uint8_t *device_id);
-    void set_frequency (uint32_t frequency)            { this->frequency_ = frequency; }
+    void set_frequency (uint32_t rf_frequency)            { this->rf_frequency_ = rf_frequency; }
     void set_tx_output_power (uint8_t tx_output_power) { this->tx_output_power_ = tx_output_power; }
     void set_lora_bandwidth (uint8_t lora_bandwidth)   { this->lora_bandwidth_ = lora_bandwidth; }
     void set_lora_spreading_factor (uint8_t lora_spreading_factor) {
@@ -62,7 +62,7 @@ protected:
     int8_t radio_txen_;
     int8_t radio_rxen_;
 
-    uint32_t frequency_;
+    uint32_t rf_frequency_;
     uint8_t  tx_output_power_;
     uint8_t  lora_bandwidth_;
     uint8_t  lora_spreading_factor_;
@@ -77,7 +77,6 @@ protected:
     uint8_t  deviceId[8];
 
     uint16_t lora_packets_rx_;
-
 }; // class LoraSX126X
 
 class LoraSX126Xrssi : public sensor::Sensor, public Component {
