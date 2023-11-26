@@ -72,7 +72,7 @@ Local source for external component:
     - source:
         type: local
         path: esphome/components 
-      components: ["lora_sx126x"]
+      components: ["sx126x"]
 #+end_src
 
 and, Github source for external component
@@ -80,9 +80,9 @@ and, Github source for external component
   external_components:
     - source:
       type: git
-      url: https://github.com/PaulSchulz/esphome-lora-sc126x
+      url: https://github.com/PaulSchulz/esphome-lora-sx126x
       ref: main
-    components: ["lora_sx126x"]
+    components: ["sx126x"]
 #+end_src
 
 ** Considerations / Things to fix
@@ -113,15 +113,27 @@ Proposed example YAML configuration
 
   ...
 
-  lora_sx126x:
-    sensor: name
+  sx126x:
+
+  sensor:
+    - platform: sx126x
+      id: lorarssi
+      name: lorarssi                 # Required for publishing into API and HA 
+
+  text_sensor:
+    - platform: sx126x
+      id: packet_in
+      name: packet_in
+
 #+end_src
+
+[[file:webserver-screenshot.png]]
 
 * Development
 ** Proposed YAML
 
 #+begin_src yaml
-  lora_sx126x:
+  sx126x:
     # optional, with sensile defaults, if possible from board id.
     pin_lora_reset: 12
     pin_lora_dio_1: 14
@@ -151,26 +163,26 @@ Proposed example YAML configuration
     tx_timeout_value:    3000
 
   text_sensor:
-    - platform: lora_sx126x
+    - platform: sx126x
       id: message
       name: LoRa Message
 
   # Is there a component for this in ESPHome?
   # Sending a string to a component.
   text_message:
-    - platform: lora_sx126x
+    - platform: sx126x
       id: send_message
       name: Send LoRa Message
 
   binary_sensor:
-    - platform: lora_sx126x
+    - platform: sx126x
       id: lora_sensor
       name: LoRa Sensor
       on_string:  "@+++"
       off_string: "@---"
 
   switch:
-    - platform: lora_sx126x
+    - platform: sx126x
       id: lora_switch
       name: LoRa Switch
       on_string: "@+++"

@@ -6,7 +6,7 @@ from esphome.components import text_sensor
 #    STATE_CLASS_MEASUREMENT,
 #)
 
-lora_sx126x_rssi_ns = cg.esphome_ns.namespace("lora_sx126x")
+lora_sx126x_rssi_ns = cg.esphome_ns.namespace("sx126x")
 #                                              ^^^^^^^^^^^
 #                                                   ^
 #                                                   |

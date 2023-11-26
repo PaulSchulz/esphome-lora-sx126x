@@ -1,6 +1,6 @@
 #include "esphome.h"
 
-#include "lora_sx126x.h"
+#include "sx126x.h"
 
 #include <SX126x-Arduino.h>
 #include <SPI.h>
@@ -9,12 +9,12 @@
 // The following is required to use log macros outside of the 'esphome' namespace.
 // See: https://github.com/esphome/issues/issues/4751
 using esphome::esp_log_printf_;
-static const char *TAG = "lora_sx126x.component";
+static const char *TAG = "sx126x";
 
 #define BUFFER_SIZE 64 // Define the payload size here
 
 namespace esphome {
-    namespace lora_sx126x {
+    namespace sx126x {
 
         hw_config hwConfig;
         static RadioEvents_t RadioEvents;
@@ -162,5 +162,5 @@ namespace esphome {
             radiolibpkt = this;
         }
 
-    }  // namespace lora_sx126x
+    }  // namespace sx126x
 }  // namespace esphome

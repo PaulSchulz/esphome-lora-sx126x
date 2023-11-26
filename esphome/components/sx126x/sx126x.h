@@ -8,9 +8,9 @@
 // #include "esphome/components/spi/spi.h"
 
 namespace esphome {
-namespace lora_sx126x {
+namespace sx126x {
 
-class LoraSX126X : public sensor::Sensor, public Component {
+    class LoraSX126X : public sensor::Sensor, public Component {
 public:
     void setup() override;
     void loop() override;
@@ -93,5 +93,5 @@ public:
 }; // class LoraSX126Xpkt
 
 
-}  // namespace lora_sx126x
+}  // namespace sx126x
 }  // namespace esphome

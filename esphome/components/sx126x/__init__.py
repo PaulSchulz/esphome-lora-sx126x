@@ -4,10 +4,9 @@ from esphome.const import CONF_ID
 
 CODEOWNERS = ["@PaulSchulz"]
 AUTO_LOAD = [ "sensor","text_sensor"]
-# MULTI_CONF = True
 DEPENDANCIES = ["spi"]
 
-lora_sx126x_ns = cg.esphome_ns.namespace("lora_sx126x")
+lora_sx126x_ns = cg.esphome_ns.namespace("sx126x")
 
 # empty_component_ns = cg.esphome_ns.namespace('empty_component')
 LoraSX126X = lora_sx126x_ns.class_('LoraSX126X', cg.Component)
