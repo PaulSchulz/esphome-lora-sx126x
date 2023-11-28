@@ -6,7 +6,7 @@ CODEOWNERS = ["@PaulSchulz"]
 AUTO_LOAD = [ "sensor","text_sensor"]
 DEPENDANCIES = ["spi"]
 
-lora_sx126x_ns = cg.esphome_ns.namespace("sx126x")
+lora_sx126x_ns = cg.esphome_ns.namespace("lora_sx126x")
 
 # empty_component_ns = cg.esphome_ns.namespace('empty_component')
 LoraSX126X = lora_sx126x_ns.class_('LoraSX126X', cg.Component)
@@ -36,15 +36,9 @@ CONF_LORA_IQ_INVERSION_ON       = 0     # Default: False (0)
 CONF_RX_TIMEOUT_VALUE      = 3000
 CONF_TX_TIMEOUT_VALUE      = 3000
 
-# LoRaWAN Parameters
-CONF_LORAWAN_REGION        = 'AU915';
-CONF_LORAWAN_APPID         = '';
-CONF_LORAWAN_APPKEY        = '';
-CONF_LORAWAN_DEVID         = '';
-
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraSX126X),
-    cv.Required('name'): cv.string,
+    cv.Optional('name'): cv.string,
 
     cv.Optional('pin_lora_reset', default=PIN_LORA_RESET): cv.int_,
     cv.Optional('pin_lora_dio_1', default=PIN_LORA_DIO_1): cv.int_,
@@ -56,7 +50,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional('radio_txen',     default=RADIO_TXEN):     cv.int_,
     cv.Optional('radio_rxen',     default=RADIO_RXEN):     cv.int_,
 
-    cv.Required('rf_frequency'): cv.int_,
+    cv.Optional('rf_frequency', default=CONF_RF_FREQUENCY): cv.int_,
 
     cv.Optional('tx_output_power',            default=CONF_TX_OUTPUT_POWER):            cv.int_,
     cv.Optional('lora_bandwidth',             default=CONF_LORA_BANDWIDTH):             cv.int_,
@@ -69,18 +63,11 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional('rx_timeout_value',           default=CONF_RX_TIMEOUT_VALUE):           cv.int_,
     cv.Optional('tx_timeout_value',           default=CONF_TX_TIMEOUT_VALUE):           cv.int_,
 
-    cv.Optional('lorawan_region', default=CONF_LORAWAN_REGION): cv.string,
-    cv.Optional('lorawan_appid',  default=CONF_LORAWAN_APPID):  cv.string,
-    cv.Optional('lorawan_appkey', default=CONF_LORAWAN_APPKEY): cv.string,
-    cv.Optional('lorawan_devid',  default=CONF_LORAWAN_DEVID):  cv.string,
-
 }).extend(cv.COMPONENT_SCHEMA)
 
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
-
-    cg.add(var.set_frequency(config['rf_frequency']))
 
     cg.add(var.set_pin_lora_reset(config['pin_lora_reset']))
     cg.add(var.set_pin_lora_dio_1(config['pin_lora_dio_1']))
@@ -91,6 +78,8 @@ def to_code(config):
     cg.add(var.set_pin_lora_mosi(config['pin_lora_mosi']))
     cg.add(var.set_radio_txen(config['radio_txen']))
     cg.add(var.set_radio_rxen(config['radio_rxen']))
+
+    cg.add(var.set_rf_frequency(config['rf_frequency']))
 
     cg.add(var.set_tx_output_power(config['tx_output_power']))
     cg.add(var.set_lora_bandwidth(config['lora_bandwidth']))

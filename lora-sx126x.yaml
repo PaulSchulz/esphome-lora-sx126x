@@ -1,3 +1,5 @@
+# This file is an example with a setup for using the SX126X LoRa radio chip.
+
 esphome:
   name: "lora-sx126x"
   libraries:
@@ -14,7 +16,7 @@ external_components:
   - source:
       type: local
       path: esphome/components 
-    components: ["sx126x"]
+    components: ["lora_sx126x"]
 
 # Enable logging
 logger:
@@ -46,10 +48,9 @@ web_server:
 #    sda: 17
 #    scl: 18
 
-sx126x:
+lora_sx126x:
   name: "LoRa Radio"
-  mode: lorawan  # 'lora' or 'lorawan'
-
+  
 # # Interface to radio chip
 # pin_lora_reset: 12  # LoRa Reset
 # pin-lora_dio_1: 14  # LoRa DIO_1
@@ -61,11 +62,9 @@ sx126x:
 # radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
 # radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
 
-# --- Use only one of the  LoRa or LoRaWAN set of configuration options ---
-# LoRa Specific Options
+# LoRa Options
 # Setting these will enable the LoRa radio mode.
-  lora:
-    rf_frequency: 915000000          # Hz - Manditory
+  rf_frequency: 915000000          # Hz - Manditory
 #   tx_output_power: 22              # dBm
 #   lora_bandwidth: 0                # [0: 1  25 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
 #   lora_spreading_factor: 7         # [SF7..SF12]
@@ -77,42 +76,8 @@ sx126x:
 #   rx_timeout_value: 3000           # ms
 #   tx_timeout_value: 3000           # ms
 
-# LoRaWAN Specific Oprions
-# Setting these will enable the LoRaWAN radio mode
-  lorawan:
-    region: AU915
-#     # AS923
-#     # AU915
-#     # CN470
-#     # CN779
-#     # EU433
-#     # EU868
-#     # IN865
-#     # KR920
-#     # US915
-#     # AS923_2
-#     # AS923_3
-#     # AS923_4
-#     # RU864
-
-    # device_eui: !secret lorawan_device_eui   # 8 bytes
-    # The Device EUI is unique to the device, It can be set here, or will be set
-    # using the WiFi MAC address, If it is set automatically, then this code
-    # won't need to be recompiled for every device.
-    
-    app_eui: !secret lorawan_app_eui    # 8 bytes     
-    # Also referred to as 'join_eui'
-
-    # The following is used for Over The Air Authentication (OTAA)
-    app_key:  !secret lorawan_app_key   # 16 bytes
-
-#   # The following is required for Activation By Personalization (ABP) - Untested
-#   nwks_key: "00000000000000000000000000000000"  # 16 bytes
-#   apps_key: "00000000000000000000000000000000"  # 16 bytes
-#   dev_addr: "00000000000000000000000000000000"  # 16 bytes
-
 sensor:
-  - platform: sx126x
+  - platform: lora_sx126x
     id: lorarssi
     name: lorarssi                 # Required for publishing into API and HA 
 
@@ -128,7 +93,7 @@ text_sensor:
       return {"Hello World"};
     update_interval: 60s
 
-  - platform: sx126x
+  - platform: lora_sx126x
     id: packet_in
     name: packet_in
 

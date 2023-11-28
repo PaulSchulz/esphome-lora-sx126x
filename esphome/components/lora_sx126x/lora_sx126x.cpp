@@ -1,6 +1,6 @@
 #include "esphome.h"
 
-#include "sx126x.h"
+#include "lora_sx126x.h"
 
 #include <SX126x-Arduino.h>
 #include <SPI.h>
@@ -9,12 +9,12 @@
 // The following is required to use log macros outside of the 'esphome' namespace.
 // See: https://github.com/esphome/issues/issues/4751
 using esphome::esp_log_printf_;
-static const char *TAG = "sx126x";
+static const char *TAG = "lora_sx126x";
 
 #define BUFFER_SIZE 64 // Define the payload size here
 
 namespace esphome {
-    namespace sx126x {
+    namespace lora_sx126x {
 
         hw_config hwConfig;
         static RadioEvents_t RadioEvents;
@@ -25,6 +25,8 @@ namespace esphome {
         LoraSX126Xrssi* radiolibrssi;
         LoraSX126Xpkt*  radiolibpkt;
 
+        //////////////////////////////////////////////////////////////////////
+        // LoRa Radio Functions
         void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
             memcpy(rxpacket, payload, size);
             rxpacket[size]='\0';
@@ -43,6 +45,8 @@ namespace esphome {
             Radio.Rx(radiolib->get_rx_timeout_value());
         }
 
+        //////////////////////////////////////////////////////////////////////
+        // ESPHome Methods
         void LoraSX126X::setup() {
             int result;
             // The following is required to access object from callbacks
@@ -62,9 +66,7 @@ namespace esphome {
             hwConfig.RADIO_TXEN     = radio_txen_;      // LORA ANTENNA TX ENABLE
             hwConfig.RADIO_RXEN     = radio_rxen_;		// LORA ANTENNA RX ENABLE
             hwConfig.USE_DIO2_ANT_SWITCH = true;
-            // Example uses an CircuitRocks Alora RFM1262 which uses DIO3 to control oscillator voltage
             hwConfig.USE_DIO3_TCXO       = true;
-            // Only Insight ISP4520 module uses DIO3 as antenna control
             hwConfig.USE_DIO3_ANT_SWITCH = false;
 
             // uint8_t deviceId[8];
@@ -81,11 +83,17 @@ namespace esphome {
 
             // Radio Statistics
             this->packets_rx_zero();
+            this->packets_tx_zero();
 
             // Initialize the LoRa chip
             ESP_LOGD(TAG, "Calling lora_hardware_init()");
-            lora_hardware_init(hwConfig);
+            uint32_t err_code = lora_hardware_init(hwConfig);
+	        if (err_code != 0) {
+		        ESP_LOGD(TAG, "ERROR: lora_hardware_init failed - %d\n", err_code);
+            }
 
+            // Setup LoRa Radio Mode
+            ESP_LOGD(TAG, "Starting LoRa Radio Mode");
             // Initialize the Radio callbacks
             RadioEvents.TxDone    = NULL;        // OnTxDone;
             RadioEvents.RxDone    = OnRxDone;    // OnRxDone;
@@ -103,7 +111,7 @@ namespace esphome {
             // Set Radio RX configuration
             ESP_LOGD(TAG, "Calling Radio.SetRxConfig()");
             Radio.SetRxConfig(MODEM_LORA, lora_bandwidth_, lora_spreading_factor_,
-                              lora_codingrate_, 0, lora_preamble_length_,
+                              lora_codingrate_, lora_bandwidth_, lora_preamble_length_,
                               lora_symbol_timeout_, lora_fix_length_payload_on_,
                               0, true, 0, 0, lora_iq_inversion_on_, true);
 
@@ -118,16 +126,15 @@ namespace esphome {
         void LoraSX126X::loop() {
             // This will be called very often after setup time.
             unsigned long currentMillis = millis();
-            if(currentMillis - previousMillis > interval)
-                {
-                    previousMillis = currentMillis;
-                    ESP_LOGD(TAG, "Tick");
-                }
+            if(currentMillis - previousMillis > interval) {
+                previousMillis = currentMillis;
+                ESP_LOGD(TAG, "Tick");
+            }
 
         }
 
         void LoraSX126X::dump_config() {
-            ESP_LOGCONFIG(TAG, "LoRa SX126X Config");
+            ESP_LOGCONFIG(TAG, "SX126X Config");
             ESP_LOGCONFIG(TAG, "  Pin LoRa Reset: %2d", pin_lora_reset_);
             ESP_LOGCONFIG(TAG, "  Pin LoRa DIO 1: %2d", pin_lora_dio_1_);
             ESP_LOGCONFIG(TAG, "  Pin LoRa Busy:  %2d", pin_lora_busy_);
@@ -138,6 +145,8 @@ namespace esphome {
             ESP_LOGCONFIG(TAG, "  Radio TXEN:     %2d", radio_txen_);
             ESP_LOGCONFIG(TAG, "  Radio RXEN:     %2d", radio_rxen_);
             ESP_LOGCONFIG(TAG, "");
+
+            ESP_LOGCONFIG(TAG, "LoRa Configuration");
             ESP_LOGCONFIG(TAG, "  Frequency:          %9d Hz", rf_frequency_);
             ESP_LOGCONFIG(TAG, "  Tx Output Power:          %3d dBm", tx_output_power_);
             ESP_LOGCONFIG(TAG, "  LoRa Bandwidth:           %3d", lora_bandwidth_);
@@ -149,6 +158,7 @@ namespace esphome {
             ESP_LOGCONFIG(TAG, "  LoRa IQ Inversion On:       %d", lora_iq_inversion_on_);
             ESP_LOGCONFIG(TAG, "  Rx Timeout Value:       %5d ms", rx_timeout_value_);
             ESP_LOGCONFIG(TAG, "  Tx Timeout Value:       %5d ms", tx_timeout_value_);
+            ESP_LOGCONFIG(TAG, "");
         }
 
         void LoraSX126Xrssi::setup() {
@@ -161,5 +171,5 @@ namespace esphome {
             radiolibpkt = this;
         }
 
-    }  // namespace sx126x
+    }  // namespace lora_sx126x
 }  // namespace esphome

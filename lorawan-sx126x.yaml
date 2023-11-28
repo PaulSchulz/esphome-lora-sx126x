@@ -1,0 +1,38 @@
+# Example
+
+# LoRaWAN Specific Oprions
+# Setting these will enable the LoRaWAN radio mode
+  lorawan:
+  region: AU915
+#     # AS923
+#     # AU915
+#     # CN470
+#     # CN779
+#     # EU433
+#     # EU868
+#     # IN865
+#     # KR920
+#     # US915
+#     # AS923_2
+#     # AS923_3
+#     # AS923_4
+#     # RU864
+  authentication: OTAA
+    # OTAA - Over the Air
+    # ABP - Activation by Personalization
+
+    # device_eui: !secret lorawan_device_eui   # 8 bytes
+    # The Device EUI is unique to the device, It can be set here, or will be set
+    # using the WiFi MAC address, If it is set automatically, then this code
+    # won't need to be recompiled for every device.
+    
+  app_eui: !secret lorawan_app_eui    # 8 bytes     
+    # Also referred to as 'join_eui'
+
+    # The following is used for Over The Air Authentication (OTAA)
+  app_key:  !secret lorawan_app_key   # 16 bytes
+
+#   # The following is required for Activation By Personalization (ABP) - Untested
+#   nwks_key: "00000000000000000000000000000000"  # 16 bytes
+#   apps_key: "00000000000000000000000000000000"  # 16 bytes
+#   dev_addr: "00000000000000000000000000000000"  # 16 bytes

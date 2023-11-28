@@ -14,9 +14,13 @@
 * Introduction
 This repository is "Work in Progress"
 
-The aim is to make the LoRa radio available, for both LoRa and LoRaWAN modes, in
-ESPHome. In the process, it is hoped that the use of this SX126X can be as easy
-as possible and in most cases wholly driven from the ESPHome YAML files.
+The aim is to make the LoRa radio available, in the direct LoRa radio mode of
+operation, in ESPHome. The goal is to make the use of SX126X radio chip as easy
+and simple as possible, using a configuration in the ESPHome YAML files, with as
+many sensible defaults as possible.
+
+A LoRaWAN configuration is not yet available, but would become available as a
+separate component.
 
 ** Hardware
 This component is being developed on the Heltec V3 Development Boards which use
@@ -26,9 +30,9 @@ the LoRa SX1262 chip. Namely:
 - [[https://heltec.org/project/wireless-stick-v3/][Heltec Wireless Stick (V3)]] - heltec_wireless_stick_V3
 - [[https://heltec.org/product/wireless-stick-lite-v3/][Heltec Wireless Stick Lite (V3)]] - heltec_wireless_stick_lite_V3
   
-At the present time, these boards are not available for specifying in the
-ESPHome YAML file (when using the Arduino framework). In order to make these
-boards work with the available version of ESPHome, the following YAML is required:
+At the present, these boards are not listed to be selected in the ESPHome YAML
+file (when using the Arduino framework). In order to make these boards work with
+the available version of ESPHome, the following YAML is required:
 
 #+begin_src yaml
 esp32:
@@ -38,7 +42,8 @@ esp32:
 #+end_src
 
 The place where these boards are defined in the platform-espessif32 project is
-[[https://github.com/platformio/platform-espressif32/tree/develop/boards][here]].
+[[https://github.com/platformio/platform-espressif32/tree/develop/boards][here]]. It is hoped that these configurations will be picked up when a new version
+of espressif32 is pull into ESPHome.
 
 ** Arduino Library
 The Arduino library being used is [[https://github.com/beegee-tokyo/SX126x-Arduino][beegee-tokyo/SX126X-Arduino]].
@@ -49,8 +54,14 @@ library:
 
 ** Testing and Usage
 The files *lora-sx126x.yaml* and *secret.yaml* provide a example of how to use the
-integration. To use with a working version of ESPHome, edit *secret.yaml* to add
-your local Wifi details, then run:
+integration. To use with a working version of ESPHome:
+
+- Edit *lora-sx126x.yaml* and ensure that the correct frequency (and band) is
+  being used for your board. This varies from region to region and board to board.
+
+- Edit *secret.yaml* and add your local Wifi details, API and OTA secrets;
+
+then run:
 
 #+begin_src bash
   esphome run lora-sx126x.yaml
@@ -72,7 +83,7 @@ Local source for external component:
     - source:
         type: local
         path: esphome/components 
-      components: ["sx126x"]
+      components: ["lora-sx126x"]
 #+end_src
 
 and, Github source for external component
@@ -82,7 +93,7 @@ and, Github source for external component
       type: git
       url: https://github.com/PaulSchulz/esphome-lora-sx126x
       ref: main
-    components: ["sx126x"]
+    components: ["lora-sx126x"]
 #+end_src
 
 ** Considerations / Things to fix
@@ -110,20 +121,20 @@ Proposed example YAML configuration
     - source:
         type: local
         path: esphome/components
-      components: ["sx126x]
+      components: [lora-sx126x]
 
   ...
 
-  sx126x:
+  lora-sx126x:
     rf_frequency: 915000000          # Manditory for user to set
 
   sensor:
-    - platform: sx126x
+    - platform: lora-sx126x
       id: lorarssi
       name: lorarssi                 # Required for publishing into API and HA 
 
   text_sensor:
-    - platform: sx126x
+    - platform: lora-sx126x
       id: packet_in
       name: packet_in
 
