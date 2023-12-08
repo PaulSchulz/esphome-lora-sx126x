@@ -1,8 +1,68 @@
-# Example
+# This file is an example with a setup for using the SX126X LoRa radio chip.
+
+esphome:
+  name: "lora-sx126x"
+  libraries:
+     - "SPI"
+     - "Ticker"
+     - "SX126x-Arduino"
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+external_components:
+  - source:
+      type: local
+      path: esphome/components 
+    components: ["lorawan_sx126x"]
+
+# Enable logging
+logger:
+
+wifi:
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+  
+ota:
+  password: !secret ota_password
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+#
+web_server:
+  port: 80
+
+#spi:
+#  clk_pin: GPIO9
+#  mosi_pin: GPIO10
+#  miso_pin: GPIO11
+
+#i2c:
+#  - id: bus_a
+#    sda: 17
+#    scl: 18
 
 # LoRaWAN Specific Oprions
 # Setting these will enable the LoRaWAN radio mode
-  lorawan:
+lorawan_sx126x:
+
+# # Interface to radio chip
+# pin_lora_reset: 12  # LoRa Reset
+# pin-lora_dio_1: 14  # LoRa DIO_1
+# pin_lora_busy:  13  # LoRa SPI Busy
+# pin_lora_nss:    8  # LoRa SPI CS (Chip Select)
+# pin_lora_sclk:   9  # LoRa SPI SCLK
+# pin_lora_miso:  11  # LoRa SPI MISO (Master In, Slave Out)
+# pin_lora_mosi:  10  # LoRa SPI MOSI (Master Out, Slave In)
+# radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
+# radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
+
   region: AU915
 #     # AS923
 #     # AU915
