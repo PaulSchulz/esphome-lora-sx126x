@@ -2,7 +2,7 @@
 #include "esphome/core/log.h"
 
 namespace esphome {
-    namespace lora_sx126x_ {
+    namespace lora_sx126x {
 
         static const char *const TAG = "lora_sx126x.switch";
 
@@ -58,5 +58,5 @@ namespace esphome {
         }
         void LoRaSX126XSwitch::set_assumed_state(bool assumed_state) { this->assumed_state_ = assumed_state; }
 
-    }  // namespace lora_sx126x_
+    }  // namespace lora_sx126x
 }  // namespace esphome

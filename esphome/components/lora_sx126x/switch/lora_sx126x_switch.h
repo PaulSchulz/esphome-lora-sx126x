@@ -5,7 +5,7 @@
 #include "esphome/components/switch/switch.h"
 
 namespace esphome {
-    namespace lora_sx126x_ {
+    namespace lora_sx126x {
         class LoRaSX126XSwitch : public switch_::Switch, public Component {
         public:
             LoRaSX126XSwitch();
@@ -35,5 +35,5 @@ namespace esphome {
             Trigger<> *prev_trigger_{nullptr};
         };
 
-    }  // namespace lora_sx126x_
+    }  // namespace lora_sx126x
 }  // namespace esphome
