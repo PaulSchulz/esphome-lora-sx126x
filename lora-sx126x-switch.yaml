@@ -1,0 +1,130 @@
+# This file is an example with a setup for using the SX126X LoRa radio chip.
+
+esphome:
+  name: "lora-sx126x"
+  libraries:
+     - "SPI"
+     - "Ticker"
+     - "SX126x-Arduino"
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+external_components:
+  - source:
+      type: local
+      path: esphome/components 
+    components: ["lora_sx126x"]
+
+# Enable logging
+logger:
+
+wifi:
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+  
+ota:
+  password: !secret ota_password
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+#
+web_server:
+  port: 80
+
+#spi:
+#  clk_pin: GPIO9
+#  mosi_pin: GPIO10
+#  miso_pin: GPIO11
+
+#i2c:
+#  - id: bus_a
+#    sda: 17
+#    scl: 18
+
+lora_sx126x:
+  name: "LoRa Radio"
+  
+# # Interface to radio chip
+# pin_lora_reset: 12  # LoRa Reset
+# pin-lora_dio_1: 14  # LoRa DIO_1
+# pin_lora_busy:  13  # LoRa SPI Busy
+# pin_lora_nss:    8  # LoRa SPI CS (Chip Select)
+# pin_lora_sclk:   9  # LoRa SPI SCLK
+# pin_lora_miso:  11  # LoRa SPI MISO (Master In, Slave Out)
+# pin_lora_mosi:  10  # LoRa SPI MOSI (Master Out, Slave In)
+# radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
+# radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
+
+# LoRa Options
+# Setting these will enable the LoRa radio mode.
+  rf_frequency: 915000000          # Hz - Manditory
+#   tx_output_power: 22              # dBm
+#   lora_bandwidth: 0                # [0: 1  25 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
+#   lora_spreading_factor: 7         # [SF7..SF12]
+#   lora_codingrate: 1               # [1: 4/5, 2: 4/6,  3: 4/7,  4: 4/8]
+#   lora_preamble_length: 8          # Same for Tx and Rx
+#   lora_symbol_timeout: 0           # Symbols
+#   lora_fx_length_payload_on: -1    # Default: -1 (False)
+#   lora_iq_inversion_on: -1         # Default: -1 (False) 
+#   rx_timeout_value: 3000           # ms
+#   tx_timeout_value: 3000           # ms
+
+sensor:
+  - platform: lora_sx126x
+    id: lorarssi
+    name: lorarssi                 # Required for publishing into API and HA 
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+  - platform: version
+    name: "ESPHome Version"
+  - platform: template
+    name: "Template Text Sensor"
+    lambda: |-
+      return {"Hello World"};
+    update_interval: 60s
+
+  - platform: lora_sx126x
+    id: packet_in
+    name: packet_in
+
+binary_sensor:
+  - platform: gpio
+    pin: 5
+    id: trigger
+    name: "Trigger (In)"
+    on_press:
+      then:
+        - switch.turn_on: monitor_switch    
+    on_release:
+      then:
+        - switch.turn_off: monitor_switch
+
+output:
+  - platform: gpio
+    pin: 6
+    id: monitor
+  - platform: gpio
+    pin: 35
+    id: monitor_led
+    
+switch:
+  - platform: output
+    id: monitor_switch
+    name: "Monitor Output (Out)"
+    output:
+#     monitor
+      monitor_led
+
+  - platform: lora_sx126x
+    name: "LoRa Switch"
+    optimistic: true
