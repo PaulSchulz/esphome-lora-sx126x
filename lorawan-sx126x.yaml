@@ -1,4 +1,4 @@
-# This file is an example with a setup for using the SX126X LoRa radio chip.
+# This file is an example with a setup for using the SX126X LoRa radio chip as LoRaWAN
 
 esphome:
   name: "lora-sx126x"
@@ -27,6 +27,7 @@ wifi:
     password: !secret wifi_password
   
 ota:
+  platform: esphome
   password: !secret ota_password
 
 # Enable Home Assistant API
@@ -77,16 +78,21 @@ lorawan_sx126x:
 #     # AS923_3
 #     # AS923_4
 #     # RU864
+  subchannel: 2
+  device_type: CLASS_A
+#     # CLASS_B
+#     # CLASS_C
+
   authentication: OTAA
     # OTAA - Over the Air
     # ABP - Activation by Personalization
 
-    # device_eui: !secret lorawan_device_eui   # 8 bytes
+# device_eui: !secret lorawan_device_eui   # 8 bytes
     # The Device EUI is unique to the device, It can be set here, or will be set
     # using the WiFi MAC address, If it is set automatically, then this code
     # won't need to be recompiled for every device.
     
-  app_eui: !secret lorawan_app_eui    # 8 bytes     
+  app_eui: !secret lorawan_join_eui    # 8 bytes     
     # Also referred to as 'join_eui'
 
     # The following is used for Over The Air Authentication (OTAA)
