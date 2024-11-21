@@ -4,22 +4,23 @@
 - [[#introduction][Introduction]]
   - [[#hardware][Hardware]]
   - [[#arduino-library][Arduino Library]]
-  - [[#testing-and-usage][Testing and Usage]]
+  - [[#usage][Usage]]
 - [[#development-comments][Development Comments]]
-  - [[#considerations--things-to-fix][Considerations / Things to fix]]
 - [[#example-yaml][Example YAML]]
 - [[#development][Development]]
   - [[#proposed-yaml][Proposed YAML]]
+  - [[#considerations--things-to-fix][Considerations / Things to fix]]
+  - [[#testing][Testing]]
 
 * Introduction
-This repository is "Work in Progress"
+This repository is "Work in Progress". Comments are most welcome.
 
 The aim is to make the LoRa radio available, in the direct LoRa radio mode of
 operation, in ESPHome. The goal is to make the use of SX126X radio chip as easy
 and simple as possible, using a configuration in the ESPHome YAML files, with as
 many sensible defaults as possible.
 
-A LoRaWAN configuration is not yet available, but would become available as a
+*NOTE:* A LoRaWAN configuration is not yet available, but would become available as a
 separate component.
 
 ** Hardware
@@ -52,7 +53,7 @@ The following header file contains the descriptions of the fields used by the
 library:
 - https://github.com/beegee-tokyo/SX126x-Arduino/blob/master/src/radio/radio.h
 
-** Testing and Usage
+** Usage
 The files *lora-sx126x.yaml* and *secret.yaml* provide a example of how to use the
 integration. To use with a working version of ESPHome:
 
@@ -71,6 +72,9 @@ then run:
 This esphome component currently does some things which are not encouraged by
 the ESPHome Core and Component developers.
 
+A this stage it does not look like it will be possible to be included in the main esphome
+project as it is making direct use of an SPI library to directly access this hardware.
+
 It is always hoped that this component will become compliant enough to be
 included in ESPHome, but in the meantime, it can be included in your ESPHome
 build by either cloning this repository locally and adding an external_component
@@ -86,7 +90,7 @@ Local source for external component:
       components: ["lora-sx126x"]
 #+end_src
 
-and, Github source for external component
+or, Github source for external component
 #+begin_src yaml
   external_components:
     - source:
@@ -95,14 +99,6 @@ and, Github source for external component
       ref: main
     components: ["lora-sx126x"]
 #+end_src
-
-** Considerations / Things to fix
-*** Direct use of SPI and SX126x-Arduino libraries
-If possible, the SX126x-Arduino library needs to be implemented natively in
-ESPHome, to make use of the native ESPHome SPI code.
-
-It is uncertain at the moment whether this component can be used generally with
-other devices that use the same SPI interface.
 
 * Example YAML
 
@@ -201,4 +197,47 @@ Proposed example YAML configuration
       on_string: "@+++"
       off_string: "@---"
 #+end_src
+
+** Considerations / Things to fix
+*** Direct use of SPI and SX126x-Arduino libraries
+If possible, the SX126x-Arduino library needs to be implemented natively in
+ESPHome, to make use of the native ESPHome SPI code.
+
+It is uncertain at the moment whether this component can be used generally with
+other devices that use the same SPI interface.
+
+*** Port to use RadioLib library
+The SX126x-Arduino library does not allow the 'syncword' to be set on the radio
+and has hardcoded values for a private (0x1424) or public (0x3444) radio setup.
+
+Meshtastic, another LoRa radio protocol, uses the RadioLib library, which
+supports a wider range of LoRa chips and allows the 'syncword' to be configured.
+They are currently using '0x2b' (or 0x24b4 to be precise).
+
+It would be good to be able to also interoperate with the Meshtastic radio
+network.
+an 
+** Testing
+The following environment is used:
+- On Ubuntu 24.10
+
+- Check out the repository
+  #+begin_src shell
+  git clone https://github.com/PaulSchulz/esphome-lora-sx126x.git
+  cd esphome-lora-sx126x
+  #+end_src
+
+- Checkout the latest esphome
+#+begin_src shell
+  python -m venv venv
+  . venv/bin/activate
+  pip install esphome
+#+end_src
+
+- (Optional) Edit 'secrets.yaml' file with local credentials
+  
+- Compile example
+  #+begin_src shell
+  esphome compile lora-sx126x.yaml
+  #+end_src
 
