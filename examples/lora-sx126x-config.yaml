@@ -1,0 +1,25 @@
+
+# # Interface to radio chip
+  # pin_lora_reset: 12  # LoRa Reset
+  # pin-lora_dio_1: 14  # LoRa DIO_1
+  # pin_lora_busy:  13  # LoRa SPI Busy
+  # pin_lora_nss:    8  # LoRa SPI CS (Chip Select)
+  # pin_lora_sclk:   9  # LoRa SPI SCLK
+  # pin_lora_miso:  11  # LoRa SPI MISO (Master In, Slave Out)
+  # pin_lora_mosi:  10  # LoRa SPI MOSI (Master Out, Slave In)
+  # radio_txen:     -1  # LoRa Antenna TX Enable, on some boards.
+  # radio_rxen:     -1  # LoRa Antenna RX Enable, on some boards.
+
+  # LoRa Options
+  # Setting these will enable the LoRa radio mode.
+  rf_frequency: 915000000          # Hz - Manditory
+  # tx_output_power: 22              # dBm
+  # lora_bandwidth: 0                # [0: 1  25 kHz, 1: 250 kHz, 2: 500 kHz, 3: Reserved]
+  # lora_spreading_factor: 7         # [SF7..SF12]
+  # lora_codingrate: 1               # [1: 4/5, 2: 4/6,  3: 4/7,  4: 4/8]
+  # lora_preamble_length: 8          # Same for Tx and Rx
+  # lora_symbol_timeout: 0           # Symbols
+  # lora_fx_length_payload_on: -1    # Default: -1 (False)
+  # lora_iq_inversion_on: -1         # Default: -1 (False) 
+  # rx_timeout_value: 3000           # ms
+  # tx_timeout_value: 3000           # ms

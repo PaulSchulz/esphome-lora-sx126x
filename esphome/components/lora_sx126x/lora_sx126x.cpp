@@ -125,12 +125,6 @@ namespace esphome {
 
         void LoraSX126X::loop() {
             // This will be called very often after setup time.
-            unsigned long currentMillis = millis();
-            if(currentMillis - previousMillis > interval) {
-                previousMillis = currentMillis;
-                ESP_LOGD(TAG, "Tick");
-            }
-
         }
 
         void LoraSX126X::dump_config() {
