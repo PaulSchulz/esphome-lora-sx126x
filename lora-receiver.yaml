@@ -1,6 +1,7 @@
 # This file is an example with a setup for using the SX126X LoRa radio chip.
 esphome:
   name: "lora-receiver"
+  name_add_mac_suffix: true
   libraries:
      - "SPI"
      - "Ticker"

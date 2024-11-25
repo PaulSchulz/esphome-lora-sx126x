@@ -27,7 +27,18 @@ namespace esphome {
 
         //////////////////////////////////////////////////////////////////////
         // LoRa Radio Functions
+        //////////////////////////////////////////////////////////////////////`
+        // OnTxDone()
+        void OnTxDone(void) {
+            ESP_LOGD(TAG, "OnTxDone");
+            radiolib->packets_tx_incrument();
+            ESP_LOGD(TAG, "Packet count: %d",radiolib->packets_tx());
+            Radio.Rx(radiolib->get_rx_timeout_value());
+        }
+
         void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
+            ESP_LOGD(TAG, "OnRxDone");
+
             memcpy(rxpacket, payload, size);
             rxpacket[size]='\0';
 
@@ -44,6 +55,60 @@ namespace esphome {
             // Set Radio to receive next packet
             Radio.Rx(radiolib->get_rx_timeout_value());
         }
+
+        // OnTxTimeout()
+        void OnTxTimeout(void) {
+            ESP_LOGD(TAG, "OnTxTimeout");
+            // Radio.Sleep();
+            Radio.Rx(radiolib->get_rx_timeout_value());
+        }
+
+        // OnRxTimeout()
+        void OnRxTimeout(void) {
+            ESP_LOGD(TAG, "OnRxTimeout");
+
+            // Check if our channel is available for sending
+            //Radio.Standby();
+            //Radio.SetCadParams(LORA_CAD_08_SYMBOL, LORA_SPREADING_FACTOR + 13, 10, LORA_CAD_ONLY, 0);
+            //cadTime = millis();
+            //Radio.StartCad();
+
+            // Radio.Standby();
+            Radio.Rx(radiolib->get_rx_timeout_value());
+            // Radio.Rx(0);
+            ESP_LOGD(TAG, "-- something has gone wrong!");
+        }
+
+        // OnRxError()
+        void OnRxError(void) {
+            ESP_LOGD(TAG, "OnRxError");
+
+            // Check if our channel is available for sending
+            //Radio.Standby();
+            //Radio.SetCadParams(LORA_CAD_08_SYMBOL, LORA_SPREADING_FACTOR + 13, 10, LORA_CAD_ONLY, 0);
+            //cadTime = millis();
+            //Radio.StartCad();
+            // Sending the ping will be started when the channel is free
+
+            Radio.Rx(radiolib->get_rx_timeout_value());
+        }
+
+        // OnCadDone()
+        time_t cadTime = 1000;
+        void OnCadDone(bool cadResult) {
+            ESP_LOGD(TAG, "OnCadDone");
+            time_t duration = millis() - cadTime;
+            if (cadResult) {
+                ESP_LOGD(TAG, "CAD returned channel busy after %ldms\n", duration);
+                Radio.Rx(radiolib->get_rx_timeout_value());
+            } else {
+                ESP_LOGD(TAG, "CAD returned channel free after %ldms\n", duration);
+                // Radio.Send(TxdBuffer, BufferSize);
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        // Tx() - Transmit a message
 
         //////////////////////////////////////////////////////////////////////
         // ESPHome Methods
@@ -69,18 +134,6 @@ namespace esphome {
             hwConfig.USE_DIO3_TCXO       = true;
             hwConfig.USE_DIO3_ANT_SWITCH = false;
 
-            // uint8_t deviceId[8];
-            BoardGetUniqueId(deviceId);
-            ESP_LOGD(TAG, "BoardId: %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X",
-                     deviceId[0],
-                     deviceId[1],
-                     deviceId[2],
-                     deviceId[3],
-                     deviceId[4],
-                     deviceId[5],
-                     deviceId[6],
-                     deviceId[7]);
-
             // Radio Statistics
             this->packets_rx_zero();
             this->packets_tx_zero();
@@ -88,19 +141,19 @@ namespace esphome {
             // Initialize the LoRa chip
             ESP_LOGD(TAG, "Calling lora_hardware_init()");
             uint32_t err_code = lora_hardware_init(hwConfig);
-	        if (err_code != 0) {
-		        ESP_LOGD(TAG, "ERROR: lora_hardware_init failed - %d\n", err_code);
+            if (err_code != 0) {
+                ESP_LOGD(TAG, "ERROR: lora_hardware_init failed - %d\n", err_code);
             }
 
             // Setup LoRa Radio Mode
             ESP_LOGD(TAG, "Starting LoRa Radio Mode");
             // Initialize the Radio callbacks
-            RadioEvents.TxDone    = NULL;        // OnTxDone;
+            RadioEvents.TxDone    = OnTxDone;    // OnTxDone;
             RadioEvents.RxDone    = OnRxDone;    // OnRxDone;
-            RadioEvents.TxTimeout = NULL;        // OnTxTimeout;
-            RadioEvents.RxTimeout = NULL;        // OnRxTimeout;
-            RadioEvents.RxError   = NULL;        // OnRxError;
-            RadioEvents.CadDone   = NULL;        // OnCadDone;
+            RadioEvents.TxTimeout = OnTxTimeout; // OnTxTimeout;
+            RadioEvents.RxTimeout = OnRxTimeout; // OnRxTimeout;
+            RadioEvents.RxError   = OnRxError;   // OnRxError;
+            RadioEvents.CadDone   = OnCadDone;   // OnCadDone;
 
             // Initialize the Radio
             Radio.Init(&RadioEvents);
@@ -109,14 +162,45 @@ namespace esphome {
             Radio.SetChannel(rf_frequency_);
 
             // Set Radio RX configuration
+            // See: https://github.com/beegee-tokyo/SX126x-Arduino/blob/master/src/radio/radio.h#L162
             ESP_LOGD(TAG, "Calling Radio.SetRxConfig()");
-            Radio.SetRxConfig(MODEM_LORA, lora_bandwidth_, lora_spreading_factor_,
-                              lora_codingrate_, lora_bandwidth_, lora_preamble_length_,
-                              lora_symbol_timeout_, lora_fix_length_payload_on_,
-                              0, true, 0, 0, lora_iq_inversion_on_, true);
+            Radio.SetRxConfig(MODEM_LORA,             // modem
+                              lora_bandwidth_,
+                              lora_spreading_factor_,
+                              lora_codingrate_,
+                              0,                      // bandwidthAfc, 0 for LoRa
+                              lora_preamble_length_,
+                              lora_symbol_timeout_,
+                              lora_fix_length_payload_on_, // false
+                              0,                      // payload length when fixed
+                              true,                   // crcOn
+                              0,                      // enable intra-packet frequency hopping
+                              0,                      // hop period in symbols
+                              lora_iq_inversion_on_,
+                              true                  // receive in continious mode
+                              );
+
+            // Set Radio TX configuration
+            // See: https://github.com/beegee-tokyo/SX126x-Arduino/blob/master/src/radio/radio.h#L208
+            ESP_LOGD(TAG, "Calling Radio.SetTxConfig()");
+            Radio.SetTxConfig(MODEM_LORA,             // modem
+                              22,                     // power
+                              0,                      // frequency deviation FSk only, 0 for LoRa
+                              lora_bandwidth_,
+                              lora_spreading_factor_, // datarate
+                              lora_codingrate_,
+                              lora_preamble_length_,
+                              lora_fix_length_payload_on_, // false
+                              true,                   // crcOn
+                              0,                      // freqHopOn
+                              0,                      // hopPeriod
+                              lora_iq_inversion_on_,
+                              1000                    // Transmission timeout
+                              );
+
 
             // Start LoRa
-            ESP_LOGD(TAG, "Calling Radio.Rx()");
+            ESP_LOGD(TAG, "Calling Radio.Rx(%d)", rx_timeout_value_);
             Radio.Rx(rx_timeout_value_);
         }
 
@@ -125,6 +209,8 @@ namespace esphome {
 
         void LoraSX126X::loop() {
             // This will be called very often after setup time.
+            // Radio.Rx(radiolib->get_rx_timeout_value());
+            Radio.Rx(rx_timeout_value_);
         }
 
         void LoraSX126X::dump_config() {
